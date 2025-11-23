@@ -1,0 +1,202 @@
+[
+    {
+        "word": "Coffee",
+        "taboo": [
+            "Drink",
+            "Caffeine",
+            "Starbucks",
+            "Morning",
+            "Bean"
+        ]
+    },
+    {
+        "word": "Superman",
+        "taboo": [
+            "Hero",
+            "Kryptonite",
+            "Clark Kent",
+            "Cape",
+            "Fly"
+        ]
+    },
+    {
+        "word": "iPhone",
+        "taboo": [
+            "Apple",
+            "Steve Jobs",
+            "Smartphone",
+            "Call",
+            "Siri"
+        ]
+    },
+    {
+        "word": "Pizza",
+        "taboo": [
+            "Cheese",
+            "Pepperoni",
+            "Italy",
+            "Slice",
+            "Delivery"
+        ]
+    },
+    {
+        "word": "Dog",
+        "taboo": [
+            "Bark",
+            "Puppy",
+            "Pet",
+            "Cat",
+            "Bone"
+        ]
+    },
+    {
+        "word": "Beach",
+        "taboo": [
+            "Sand",
+            "Ocean",
+            "Sun",
+            "Vacation",
+            "Wave"
+        ]
+    },
+    {
+        "word": "School",
+        "taboo": [
+            "Teacher",
+            "Student",
+            "Class",
+            "Learn",
+            "Homework"
+        ]
+    },
+    {
+        "word": "Guitar",
+        "taboo": [
+            "Music",
+            "String",
+            "Instrument",
+            "Play",
+            "Band"
+        ]
+    },
+    {
+        "word": "Doctor",
+        "taboo": [
+            "Hospital",
+            "Nurse",
+            "Sick",
+            "Medicine",
+            "Heal"
+        ]
+    },
+    {
+        "word": "Facebook",
+        "taboo": [
+            "Social Media",
+            "Mark Zuckerberg",
+            "Like",
+            "Post",
+            "Friend"
+        ]
+    },
+    {
+        "word": "Soccer",
+        "taboo": [
+            "Football",
+            "Ball",
+            "Goal",
+            "Sport",
+            "Kick"
+        ]
+    },
+    {
+        "word": "Moon",
+        "taboo": [
+            "Night",
+            "Space",
+            "Star",
+            "Orbit",
+            "Apollo"
+        ]
+    },
+    {
+        "word": "Library",
+        "taboo": [
+            "Book",
+            "Read",
+            "Quiet",
+            "Study",
+            "Librarian"
+        ]
+    },
+    {
+        "word": "Fire",
+        "taboo": [
+            "Hot",
+            "Burn",
+            "Flame",
+            "Smoke",
+            "Camp"
+        ]
+    },
+    {
+        "word": "Snow",
+        "taboo": [
+            "Cold",
+            "Winter",
+            "White",
+            "Ice",
+            "Flake"
+        ]
+    },
+    {
+        "word": "Airplane",
+        "taboo": [
+            "Fly",
+            "Sky",
+            "Travel",
+            "Pilot",
+            "Airport"
+        ]
+    },
+    {
+        "word": "Birthday",
+        "taboo": [
+            "Cake",
+            "Party",
+            "Candle",
+            "Gift",
+            "Age"
+        ]
+    },
+    {
+        "word": "Camera",
+        "taboo": [
+            "Photo",
+            "Picture",
+            "Lens",
+            "Shoot",
+            "Flash"
+        ]
+    },
+    {
+        "word": "Vampire",
+        "taboo": [
+            "Blood",
+            "Dracula",
+            "Bat",
+            "Twilight",
+            "Fangs"
+        ]
+    },
+    {
+        "word": "YouTube",
+        "taboo": [
+            "Video",
+            "Google",
+            "Stream",
+            "Subscribe",
+            "Channel"
+        ]
+    }
+]

@@ -24,8 +24,13 @@ class RoomManager {
         this.rooms = new Map();
     }
 
-    createRoom(hostId, hostName) {
+    createRoom(hostId, hostName, settings = {}) {
         const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const defaultSettings = {
+            rounds: 3,
+            timer: 60
+        };
+
         this.rooms.set(roomId, {
             id: roomId,
             players: [{ id: hostId, name: hostName, team: null, role: 'spectator' }],
@@ -37,12 +42,17 @@ class RoomManager {
                 describer: null,
                 watcher: null,
                 card: null,
-                timeLeft: 60,
+                timeLeft: settings.timer || defaultSettings.timer,
                 timer: null
             },
             settings: {
-                turnDuration: 60,
-                winningScore: 30
+                rounds: settings.rounds || defaultSettings.rounds,
+                turnDuration: settings.timer || defaultSettings.timer,
+                winningScore: 30 // Legacy, maybe remove?
+            },
+            stats: {
+                currentRound: 1,
+                turnsPlayed: 0
             }
         });
         return roomId;
@@ -99,6 +109,15 @@ class RoomManager {
         room.gameState = 'playing';
         room.scores = { A: 0, B: 0 };
         room.currentTurn.team = 'A'; // Team A starts
+
+        // Calculate target turns per team
+        // To ensure fairness, both teams play the same number of turns.
+        // This number is based on the larger team size * rounds.
+        const maxTeamSize = Math.max(room.teams.A.length, room.teams.B.length);
+        room.stats.targetTurnsPerTeam = maxTeamSize * room.settings.rounds;
+        room.stats.turnsPlayedA = 0;
+        room.stats.turnsPlayedB = 0;
+
         this.startTurn(roomId);
         return room;
     }
@@ -107,18 +126,26 @@ class RoomManager {
         const room = this.rooms.get(roomId);
         if (!room) return;
 
+        // Check if game should end
+        if (room.stats.turnsPlayedA >= room.stats.targetTurnsPerTeam &&
+            room.stats.turnsPlayedB >= room.stats.targetTurnsPerTeam) {
+            this.endGame(roomId);
+            return;
+        }
+
         const currentTeam = room.currentTurn.team;
         const opposingTeam = currentTeam === 'A' ? 'B' : 'A';
 
         // Select Describer (rotate through team)
-        // For simplicity, pick random for now, or sequential if we tracked it.
-        // Let's just pick random from the current team.
         const teamPlayers = room.teams[currentTeam];
-        const describerId = teamPlayers[Math.floor(Math.random() * teamPlayers.length)];
+        const turnsPlayedByTeam = currentTeam === 'A' ? room.stats.turnsPlayedA : room.stats.turnsPlayedB;
+        const describerId = teamPlayers[turnsPlayedByTeam % teamPlayers.length];
 
         // Select Watcher (from opposing team)
+        // Watcher also rotates to ensure everyone watches equally
         const opposingPlayers = room.teams[opposingTeam];
-        const watcherId = opposingPlayers[Math.floor(Math.random() * opposingPlayers.length)];
+        const turnsPlayedByOpposing = currentTeam === 'A' ? room.stats.turnsPlayedB : room.stats.turnsPlayedA;
+        const watcherId = opposingPlayers[turnsPlayedByOpposing % opposingPlayers.length];
 
         // Pick a random card
         const card = cards[Math.floor(Math.random() * cards.length)];
@@ -168,9 +195,28 @@ class RoomManager {
 
         if (room.currentTurn.timer) clearInterval(room.currentTurn.timer);
 
+        // Increment stats for the team that just played
+        if (room.currentTurn.team === 'A') {
+            room.stats.turnsPlayedA++;
+        } else {
+            room.stats.turnsPlayedB++;
+        }
+
         // Switch teams
         room.currentTurn.team = room.currentTurn.team === 'A' ? 'B' : 'A';
         this.startTurn(roomId); // Start next turn immediately
+    }
+
+    endGame(roomId) {
+        const room = this.rooms.get(roomId);
+        if (!room) return;
+
+        room.gameState = 'ended';
+        room.currentTurn.card = null;
+        room.currentTurn.describer = null;
+        room.currentTurn.watcher = null;
+
+        this.emitRoomUpdate(roomId, room);
     }
 
     handleAction(roomId, action) {
@@ -216,9 +262,9 @@ const roomManager = new RoomManager();
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
 
-    socket.on('create_room', ({ playerName }) => {
-        console.log(`Received create_room from ${socket.id} (${playerName})`);
-        const roomId = roomManager.createRoom(socket.id, playerName);
+    socket.on('create_room', ({ playerName, settings }) => {
+        console.log(`Received create_room from ${socket.id} (${playerName}) with settings:`, settings);
+        const roomId = roomManager.createRoom(socket.id, playerName, settings);
         socket.join(roomId);
         socket.emit('room_created', roomId);
         roomManager.emitRoomUpdate(roomId, roomManager.rooms.get(roomId));

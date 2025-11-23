@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 const Lobby = ({ onCreateRoom, onJoinRoom }) => {
     const [playerName, setPlayerName] = useState('');
     const [roomCode, setRoomCode] = useState('');
+    const [rounds, setRounds] = useState(3);
+    const [timer, setTimer] = useState(60);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4 space-y-8">
@@ -31,9 +33,35 @@ const Lobby = ({ onCreateRoom, onJoinRoom }) => {
                     />
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="block mb-2 text-sm font-bold text-gray-300">Rounds</label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="10"
+                            value={rounds}
+                            onChange={(e) => setRounds(parseInt(e.target.value) || 1)}
+                            className="w-full px-4 py-3 text-white bg-black/50 border border-white/20 rounded-xl focus:outline-none focus:border-neonBlue focus:ring-1 focus:ring-neonBlue transition-all"
+                        />
+                    </div>
+                    <div>
+                        <label className="block mb-2 text-sm font-bold text-gray-300">Timer (s)</label>
+                        <input
+                            type="number"
+                            min="10"
+                            max="300"
+                            step="10"
+                            value={timer}
+                            onChange={(e) => setTimer(parseInt(e.target.value) || 60)}
+                            className="w-full px-4 py-3 text-white bg-black/50 border border-white/20 rounded-xl focus:outline-none focus:border-neonBlue focus:ring-1 focus:ring-neonBlue transition-all"
+                        />
+                    </div>
+                </div>
+
                 <div className="flex flex-col space-y-4">
                     <button
-                        onClick={() => onCreateRoom(playerName)}
+                        onClick={() => onCreateRoom(playerName, { rounds, timer })}
                         disabled={!playerName}
                         className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
                     >

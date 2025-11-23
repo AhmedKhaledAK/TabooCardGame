@@ -68,14 +68,14 @@ function App() {
     };
   }, [roomId]);
 
-  const handleCreateRoom = (playerName) => {
-    console.log('Creating room for:', playerName);
+  const handleCreateRoom = (playerName, settings) => {
+    console.log('Creating room for:', playerName, 'with settings:', settings);
     if (!socket.connected) {
       console.error('Socket not connected!');
       alert('Cannot create room: Server not connected');
       return;
     }
-    socket.emit('create_room', { playerName });
+    socket.emit('create_room', { playerName, settings });
   };
 
   const handleJoinRoom = (code, playerName) => {

@@ -110,6 +110,11 @@ const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction }) => {
                 </div>
 
                 <div className="flex flex-col items-center">
+                    <div className="mb-4 px-6 py-2 bg-white/10 rounded-full border border-white/20 backdrop-blur-sm">
+                        <span className="text-lg font-bold text-white">
+                            Round {room.stats.currentRound} of {room.settings.rounds}
+                        </span>
+                    </div>
                     <Scoreboard scores={room.scores} currentTeam={currentTurn.team} />
                     <Timer timeLeft={currentTurn.timeLeft} />
                 </div>

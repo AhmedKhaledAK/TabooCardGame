@@ -88,8 +88,52 @@ const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction }) => {
     return (
         <div className="flex flex-col items-center min-h-screen p-4">
             <div className="w-full max-w-6xl flex justify-between items-start p-4">
-                <Scoreboard scores={room.scores} currentTeam={currentTurn.team} />
-                <Timer timeLeft={currentTurn.timeLeft} />
+                {/* Team A List */}
+                <div className={`p-4 rounded-xl border ${currentTurn.team === 'A' ? 'border-neonPurple bg-neonPurple/10' : 'border-white/10 bg-black/30'}`}>
+                    <h3 className="text-neonPurple font-bold mb-2">Team A</h3>
+                    <ul className="space-y-1">
+                        {room.teams.A.map(id => {
+                            const p = room.players.find(pl => pl.id === id);
+                            const isMe = p?.id === playerId;
+                            const isDescriber = room.currentTurn.describer === id;
+                            const isWatcher = room.currentTurn.watcher === id;
+                            return (
+                                <li key={id} className={`flex items-center space-x-2 ${isMe ? 'font-bold text-white' : 'text-gray-400'}`}>
+                                    <span>{p?.name}</span>
+                                    {isMe && <span className="text-xs bg-white/20 px-1 rounded">YOU</span>}
+                                    {isDescriber && <span className="text-xs text-neonPurple border border-neonPurple px-1 rounded">DESCRIBER</span>}
+                                    {isWatcher && <span className="text-xs text-neonBlue border border-neonBlue px-1 rounded">WATCHER</span>}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+
+                <div className="flex flex-col items-center">
+                    <Scoreboard scores={room.scores} currentTeam={currentTurn.team} />
+                    <Timer timeLeft={currentTurn.timeLeft} />
+                </div>
+
+                {/* Team B List */}
+                <div className={`p-4 rounded-xl border ${currentTurn.team === 'B' ? 'border-neonBlue bg-neonBlue/10' : 'border-white/10 bg-black/30'}`}>
+                    <h3 className="text-neonBlue font-bold mb-2">Team B</h3>
+                    <ul className="space-y-1">
+                        {room.teams.B.map(id => {
+                            const p = room.players.find(pl => pl.id === id);
+                            const isMe = p?.id === playerId;
+                            const isDescriber = room.currentTurn.describer === id;
+                            const isWatcher = room.currentTurn.watcher === id;
+                            return (
+                                <li key={id} className={`flex items-center space-x-2 ${isMe ? 'font-bold text-white' : 'text-gray-400'}`}>
+                                    <span>{p?.name}</span>
+                                    {isMe && <span className="text-xs bg-white/20 px-1 rounded">YOU</span>}
+                                    {isDescriber && <span className="text-xs text-neonPurple border border-neonPurple px-1 rounded">DESCRIBER</span>}
+                                    {isWatcher && <span className="text-xs text-neonBlue border border-neonBlue px-1 rounded">WATCHER</span>}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
             </div>
 
             <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl">

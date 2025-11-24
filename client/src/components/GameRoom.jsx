@@ -5,7 +5,7 @@ import Controls from './Controls';
 import Timer from './Timer';
 import Scoreboard from './Scoreboard';
 
-const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction, onConfirmStartTurn, onResetGame, countdown }) => {
+const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction, onConfirmStartTurn, onResetGame, onStartNextRound, countdown }) => {
     const player = room.players.find(p => p.id === playerId);
     const isHost = room.players[0].id === playerId; // Simple host check
 
@@ -77,6 +77,43 @@ const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction, onConfirm
                     >
                         {countdown}
                     </motion.div>
+                </div>
+            )}
+
+            {/* Round End Overlay */}
+            {room.gameState === 'round_ended' && (
+                <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-lg flex flex-col items-center justify-center p-8 animate-in fade-in duration-300">
+                    <h2 className="text-5xl font-bold text-white mb-8 tracking-wider">
+                        ROUND {room.stats?.currentRound - 1} COMPLETE!
+                    </h2>
+
+                    {/* Scores */}
+                    <div className="flex items-center space-x-16 mb-12">
+                        <div className="flex flex-col items-center">
+                            <span className="text-2xl text-neonPurple font-bold mb-2">TEAM A</span>
+                            <span className="text-7xl font-black text-white">{room.scores.A}</span>
+                        </div>
+                        <div className="text-4xl text-gray-600 font-thin">vs</div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-2xl text-neonBlue font-bold mb-2">TEAM B</span>
+                            <span className="text-7xl font-black text-white">{room.scores.B}</span>
+                        </div>
+                    </div>
+
+                    {/* Next Round Button */}
+                    {isHost && (
+                        <button
+                            onClick={onStartNextRound}
+                            className="px-10 py-4 bg-neonPurple text-white font-bold text-xl rounded-xl hover:bg-neonPurple/80 hover:scale-105 transition-all shadow-[0_0_20px_rgba(176,38,255,0.4)]"
+                        >
+                            START ROUND {room.stats?.currentRound}
+                        </button>
+                    )}
+                    {!isHost && (
+                        <p className="text-gray-400 animate-pulse text-lg">
+                            Waiting for host to start the next round...
+                        </p>
+                    )}
                 </div>
             )}
 

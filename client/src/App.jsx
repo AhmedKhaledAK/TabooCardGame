@@ -120,6 +120,10 @@ function App() {
     socket.emit('shuffle_teams', { roomId });
   };
 
+  const handleStartNextRound = () => {
+    socket.emit('start_next_round', { roomId });
+  };
+
   const handleAction = (action) => {
     socket.emit('game_action', { roomId, action });
   };
@@ -144,6 +148,7 @@ function App() {
         onAction={handleAction}
         onConfirmStartTurn={handleConfirmStartTurn}
         onResetGame={handleResetGame}
+        onStartNextRound={handleStartNextRound}
         countdown={countdown}
       />
     )

@@ -114,6 +114,8 @@ class RoomManager {
         // To ensure fairness, both teams play the same number of turns.
         // This number is based on the larger team size * rounds.
         const maxTeamSize = Math.max(room.teams.A.length, room.teams.B.length);
+
+        room.stats.maxTeamSize = maxTeamSize; // Store for round calculation
         room.stats.targetTurnsPerTeam = maxTeamSize * room.settings.rounds;
         room.stats.turnsPlayedA = 0;
         room.stats.turnsPlayedB = 0;
@@ -296,9 +298,65 @@ class RoomManager {
             room.stats.turnsPlayedB++;
         }
 
+        // Check for Round Completion
+        // A round is complete when both teams have played 'maxTeamSize' turns.
+        // We check if turnsPlayedA and turnsPlayedB are equal AND multiples of maxTeamSize.
+        // AND we are not at the end of the game (which is checked in startTurn, but we can check here too to be safe/clear).
+
+        const turnsA = room.stats.turnsPlayedA;
+        const turnsB = room.stats.turnsPlayedB;
+        const maxTeamSize = room.stats.maxTeamSize;
+        const targetTurns = room.stats.targetTurnsPerTeam;
+
+        console.log(`[endTurn] Turns A: ${turnsA}, Turns B: ${turnsB}, MaxTeamSize: ${maxTeamSize}, Target: ${targetTurns}`);
+
+        // Update current round display
+        const minTurns = Math.min(turnsA, turnsB);
+        room.stats.currentRound = Math.floor(minTurns / maxTeamSize) + 1;
+
+        console.log(`[endTurn] Calculated Round: ${room.stats.currentRound}`);
+
+        // Check if Game Over first
+        if (turnsA >= targetTurns && turnsB >= targetTurns) {
+            console.log('[endTurn] Game Over triggered');
+            this.endGame(roomId);
+            return;
+        }
+
+        // Check if Round Ended
+        // Condition: Both teams played equal turns, and that number is a multiple of team size.
+        // And we are not at the very start (turns > 0).
+        if (turnsA === turnsB && turnsA > 0 && turnsA % maxTeamSize === 0) {
+            console.log('[endTurn] Round Ended triggered');
+            room.gameState = 'round_ended';
+            room.currentTurn.card = null; // Hide card
+            this.emitRoomUpdate(roomId, room);
+            return;
+        }
+
         // Switch teams
         room.currentTurn.team = room.currentTurn.team === 'A' ? 'B' : 'A';
         this.startTurn(roomId); // Start next turn immediately
+    }
+
+    startNextRound(roomId) {
+        const room = this.rooms.get(roomId);
+        if (!room || room.gameState !== 'round_ended') return;
+
+        // Switch teams for the new round?
+        // Usually in Taboo, turns just alternate.
+        // So we just continue. The team switch happens in endTurn normally.
+        // But we returned early in endTurn, so we didn't switch teams yet.
+        // Wait, if Team A played last to finish the round, we should switch to Team B.
+        // Let's check who played last.
+        // Actually, endTurn increments stats for the team that just played.
+        // So room.currentTurn.team is still the team that just played.
+        // So we need to switch it.
+
+        room.currentTurn.team = room.currentTurn.team === 'A' ? 'B' : 'A';
+
+        // Start the turn
+        this.startTurn(roomId);
     }
 
     endGame(roomId) {
@@ -419,6 +477,10 @@ io.on('connection', (socket) => {
 
     socket.on('shuffle_teams', ({ roomId }) => {
         roomManager.shuffleTeams(roomId);
+    });
+
+    socket.on('start_next_round', ({ roomId }) => {
+        roomManager.startNextRound(roomId);
     });
 
     socket.on('game_action', ({ roomId, action }) => {

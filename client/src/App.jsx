@@ -120,6 +120,10 @@ function App() {
     socket.emit('shuffle_teams', { roomId });
   };
 
+  const handleUpdateSettings = (settings) => {
+    socket.emit('update_settings', { roomId, settings });
+  };
+
   const handleStartNextRound = () => {
     socket.emit('start_next_round', { roomId });
   };
@@ -140,6 +144,7 @@ function App() {
         onJoinTeam={handleJoinTeam}
         onStartGame={handleStartGame}
         onShuffleTeams={handleShuffleTeams}
+        onUpdateSettings={handleUpdateSettings}
       />
     ) : (
       <GameRoom

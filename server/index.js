@@ -273,6 +273,21 @@ class RoomManager {
         this.emitRoomUpdate(roomId, room);
     }
 
+    updateSettings(roomId, settings) {
+        const room = this.rooms.get(roomId);
+        if (!room || room.gameState !== 'lobby') return;
+
+        if (settings.rounds) {
+            room.settings.rounds = parseInt(settings.rounds) || 3;
+        }
+        if (settings.timer) {
+            room.settings.turnDuration = parseInt(settings.timer) || 60;
+            room.currentTurn.timeLeft = room.settings.turnDuration;
+        }
+
+        this.emitRoomUpdate(roomId, room);
+    }
+
     emitRoomUpdate(roomId, room) {
         // Create a copy without the timer object to avoid circular references
         const roomToSend = {
@@ -308,17 +323,12 @@ class RoomManager {
         const maxTeamSize = room.stats.maxTeamSize;
         const targetTurns = room.stats.targetTurnsPerTeam;
 
-        console.log(`[endTurn] Turns A: ${turnsA}, Turns B: ${turnsB}, MaxTeamSize: ${maxTeamSize}, Target: ${targetTurns}`);
-
         // Update current round display
         const minTurns = Math.min(turnsA, turnsB);
         room.stats.currentRound = Math.floor(minTurns / maxTeamSize) + 1;
 
-        console.log(`[endTurn] Calculated Round: ${room.stats.currentRound}`);
-
         // Check if Game Over first
         if (turnsA >= targetTurns && turnsB >= targetTurns) {
-            console.log('[endTurn] Game Over triggered');
             this.endGame(roomId);
             return;
         }
@@ -327,7 +337,6 @@ class RoomManager {
         // Condition: Both teams played equal turns, and that number is a multiple of team size.
         // And we are not at the very start (turns > 0).
         if (turnsA === turnsB && turnsA > 0 && turnsA % maxTeamSize === 0) {
-            console.log('[endTurn] Round Ended triggered');
             room.gameState = 'round_ended';
             room.currentTurn.card = null; // Hide card
             this.emitRoomUpdate(roomId, room);
@@ -477,6 +486,10 @@ io.on('connection', (socket) => {
 
     socket.on('shuffle_teams', ({ roomId }) => {
         roomManager.shuffleTeams(roomId);
+    });
+
+    socket.on('update_settings', ({ roomId, settings }) => {
+        roomManager.updateSettings(roomId, settings);
     });
 
     socket.on('start_next_round', ({ roomId }) => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
-const Lobby = ({ room, playerId, onJoinTeam, onStartGame, onShuffleTeams, onJoinRoom, onCreateRoom }) => {
+const Lobby = ({ room, playerId, onJoinTeam, onStartGame, onShuffleTeams, onUpdateSettings, onJoinRoom, onCreateRoom }) => {
     const [playerName, setPlayerName] = useState('');
     const [roomCode, setRoomCode] = useState('');
     const [rounds, setRounds] = useState(3);
@@ -144,6 +144,44 @@ const Lobby = ({ room, playerId, onJoinTeam, onStartGame, onShuffleTeams, onJoin
                     {room.players.filter(p => !p.team).map(p => (
                         <span key={p.id} className="px-4 py-2 bg-white/5 rounded-full text-gray-300">{p.name}</span>
                     ))}
+                </div>
+            </div>
+
+            {/* Room Settings Display / Edit */}
+            <div className="w-full max-w-2xl bg-white/5 rounded-xl p-6 border border-white/10">
+                <h3 className="text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">Room Settings</h3>
+                <div className="grid grid-cols-2 gap-8">
+                    <div>
+                        <label className="block text-sm text-gray-400 mb-1">Rounds</label>
+                        {isHost ? (
+                            <input
+                                type="number"
+                                min="1"
+                                max="10"
+                                value={room.settings.rounds}
+                                onChange={(e) => onUpdateSettings({ rounds: e.target.value })}
+                                className="w-full bg-black/50 text-white px-3 py-2 rounded border border-white/20 focus:border-neonPurple outline-none"
+                            />
+                        ) : (
+                            <div className="text-2xl font-bold text-white">{room.settings.rounds}</div>
+                        )}
+                    </div>
+                    <div>
+                        <label className="block text-sm text-gray-400 mb-1">Timer (s)</label>
+                        {isHost ? (
+                            <input
+                                type="number"
+                                min="10"
+                                max="300"
+                                step="10"
+                                value={room.settings.turnDuration}
+                                onChange={(e) => onUpdateSettings({ timer: e.target.value })}
+                                className="w-full bg-black/50 text-white px-3 py-2 rounded border border-white/20 focus:border-neonBlue outline-none"
+                            />
+                        ) : (
+                            <div className="text-2xl font-bold text-white">{room.settings.turnDuration}s</div>
+                        )}
+                    </div>
                 </div>
             </div>
 

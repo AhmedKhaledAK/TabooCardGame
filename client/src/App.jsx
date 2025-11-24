@@ -11,6 +11,8 @@ function App() {
   const [roomId, setRoomId] = useState(null);
   const [roomData, setRoomData] = useState(null);
   const [playerId, setPlayerId] = useState(socket.id);
+  const [playerName, setPlayerName] = useState('');
+  const [countdown, setCountdown] = useState(null);
 
   useEffect(() => {
     function onConnect() {
@@ -47,6 +49,15 @@ function App() {
       });
     }
 
+    function onCountdownUpdate(count) {
+      setCountdown(count);
+    }
+
+    function onActionFeedback(feedback) {
+      console.log('Action feedback:', feedback);
+      // TODO: Show visual feedback
+    }
+
     function onError(msg) {
       alert(msg);
     }
@@ -56,6 +67,8 @@ function App() {
     socket.on('room_created', onRoomCreated);
     socket.on('room_update', onRoomUpdate);
     socket.on('timer_update', onTimerUpdate);
+    socket.on('countdown_update', onCountdownUpdate);
+    socket.on('action_feedback', onActionFeedback);
     socket.on('error', onError);
 
     return () => {
@@ -64,9 +77,11 @@ function App() {
       socket.off('room_created', onRoomCreated);
       socket.off('room_update', onRoomUpdate);
       socket.off('timer_update', onTimerUpdate);
+      socket.off('countdown_update', onCountdownUpdate);
+      socket.off('action_feedback', onActionFeedback);
       socket.off('error', onError);
     };
-  }, [roomId]);
+  }, [roomId]); // Keep roomId in dependency array as it's used in onRoomUpdate
 
   const handleCreateRoom = (playerName, settings) => {
     console.log('Creating room for:', playerName, 'with settings:', settings);
@@ -76,10 +91,13 @@ function App() {
       return;
     }
     socket.emit('create_room', { playerName, settings });
+    setPlayerName(playerName);
   };
 
   const handleJoinRoom = (code, playerName) => {
     socket.emit('join_room', { roomId: code, playerName });
+    setRoomId(code); // Set roomId here as well
+    setPlayerName(playerName);
   };
 
   const handleJoinTeam = (team) => {
@@ -90,22 +108,45 @@ function App() {
     socket.emit('start_game', { roomId });
   };
 
-  const handleGameAction = (action) => {
+  const handleConfirmStartTurn = () => {
+    socket.emit('confirm_start_turn', { roomId });
+  };
+
+  const handleResetGame = () => {
+    socket.emit('reset_game', { roomId });
+  };
+
+  const handleShuffleTeams = () => {
+    socket.emit('shuffle_teams', { roomId });
+  };
+
+  const handleAction = (action) => {
     socket.emit('game_action', { roomId, action });
   };
 
   if (!roomData) {
-    return <Lobby onCreateRoom={handleCreateRoom} onJoinRoom={handleJoinRoom} />;
+    return <Lobby room={null} onCreateRoom={handleCreateRoom} onJoinRoom={handleJoinRoom} />;
   }
 
   return (
-    <GameRoom
-      room={roomData}
-      playerId={playerId || socket.id}
-      onJoinTeam={handleJoinTeam}
-      onStartGame={handleStartGame}
-      onAction={handleGameAction}
-    />
+    roomData.gameState === 'lobby' ? (
+      <Lobby
+        room={roomData}
+        playerId={socket.id}
+        onJoinTeam={handleJoinTeam}
+        onStartGame={handleStartGame}
+        onShuffleTeams={handleShuffleTeams}
+      />
+    ) : (
+      <GameRoom
+        room={roomData}
+        playerId={socket.id}
+        onAction={handleAction}
+        onConfirmStartTurn={handleConfirmStartTurn}
+        onResetGame={handleResetGame}
+        countdown={countdown}
+      />
+    )
   );
 }
 

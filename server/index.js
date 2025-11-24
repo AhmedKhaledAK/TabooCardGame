@@ -106,7 +106,7 @@ class RoomManager {
             return null;
         }
 
-        room.gameState = 'playing';
+        room.gameState = 'waiting_for_turn';
         room.scores = { A: 0, B: 0 };
         room.currentTurn.team = 'A'; // Team A starts
 
@@ -142,7 +142,6 @@ class RoomManager {
         const describerId = teamPlayers[turnsPlayedByTeam % teamPlayers.length];
 
         // Select Watcher (from opposing team)
-        // Watcher also rotates to ensure everyone watches equally
         const opposingPlayers = room.teams[opposingTeam];
         const turnsPlayedByOpposing = currentTeam === 'A' ? room.stats.turnsPlayedB : room.stats.turnsPlayedA;
         const watcherId = opposingPlayers[turnsPlayedByOpposing % opposingPlayers.length];
@@ -155,6 +154,9 @@ class RoomManager {
         room.currentTurn.card = card;
         room.currentTurn.timeLeft = room.settings.turnDuration;
 
+        // Set state to waiting_for_turn
+        room.gameState = 'waiting_for_turn';
+
         // Update roles for all players
         room.players.forEach(p => {
             if (p.id === describerId) p.role = 'describer';
@@ -163,7 +165,41 @@ class RoomManager {
             else p.role = 'spectator';
         });
 
-        // Start Timer
+        // Clear any existing timer
+        if (room.currentTurn.timer) clearInterval(room.currentTurn.timer);
+
+        this.emitRoomUpdate(roomId, room);
+    }
+
+    confirmStartTurn(roomId) {
+        const room = this.rooms.get(roomId);
+        if (!room || room.gameState !== 'waiting_for_turn') return;
+
+        room.gameState = 'resuming'; // Using 'resuming' for countdown state
+        let countdown = 5;
+
+        // Emit initial countdown
+        io.to(roomId).emit('countdown_update', countdown);
+        this.emitRoomUpdate(roomId, room);
+
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            io.to(roomId).emit('countdown_update', countdown);
+
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                this.startTurnTimer(roomId);
+            }
+        }, 1000);
+    }
+
+    startTurnTimer(roomId) {
+        const room = this.rooms.get(roomId);
+        if (!room) return;
+
+        room.gameState = 'playing';
+        this.emitRoomUpdate(roomId, room);
+
         if (room.currentTurn.timer) clearInterval(room.currentTurn.timer);
         room.currentTurn.timer = setInterval(() => {
             room.currentTurn.timeLeft--;
@@ -173,6 +209,64 @@ class RoomManager {
                 this.endTurn(roomId);
             }
         }, 1000);
+    }
+
+    resetGame(roomId) {
+        const room = this.rooms.get(roomId);
+        if (!room) return;
+
+        // Clear any existing timer immediately
+        if (room.currentTurn.timer) {
+            clearInterval(room.currentTurn.timer);
+        }
+
+        room.gameState = 'lobby';
+        room.scores = { A: 0, B: 0 };
+        room.stats = {
+            currentRound: 1,
+            turnsPlayedA: 0,
+            turnsPlayedB: 0,
+            targetTurnsPerTeam: 0
+        };
+        room.currentTurn = {
+            team: 'A',
+            describer: null,
+            watcher: null,
+            card: null,
+            timeLeft: room.settings.turnDuration,
+            timer: null
+        };
+
+        // Reset roles
+        room.players.forEach(p => p.role = 'spectator');
+
+        this.emitRoomUpdate(roomId, room);
+    }
+
+    shuffleTeams(roomId) {
+        const room = this.rooms.get(roomId);
+        if (!room || room.gameState !== 'lobby') return;
+
+        // Get all players
+        const allPlayers = [...room.players];
+
+        // Fisher-Yates Shuffle
+        for (let i = allPlayers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allPlayers[i], allPlayers[j]] = [allPlayers[j], allPlayers[i]];
+        }
+
+        // Split into two teams
+        const mid = Math.ceil(allPlayers.length / 2);
+        const teamA = allPlayers.slice(0, mid);
+        const teamB = allPlayers.slice(mid);
+
+        room.teams.A = teamA.map(p => p.id);
+        room.teams.B = teamB.map(p => p.id);
+
+        // Update player objects
+        teamA.forEach(p => p.team = 'A');
+        teamB.forEach(p => p.team = 'B');
 
         this.emitRoomUpdate(roomId, room);
     }
@@ -210,6 +304,10 @@ class RoomManager {
     endGame(roomId) {
         const room = this.rooms.get(roomId);
         if (!room) return;
+
+        if (room.currentTurn.timer) {
+            clearInterval(room.currentTurn.timer);
+        }
 
         room.gameState = 'ended';
         room.currentTurn.card = null;
@@ -309,6 +407,18 @@ io.on('connection', (socket) => {
             console.log('Failed to start game');
             socket.emit('error', 'Failed to start game: Room not found or not enough players');
         }
+    });
+
+    socket.on('confirm_start_turn', ({ roomId }) => {
+        roomManager.confirmStartTurn(roomId);
+    });
+
+    socket.on('reset_game', ({ roomId }) => {
+        roomManager.resetGame(roomId);
+    });
+
+    socket.on('shuffle_teams', ({ roomId }) => {
+        roomManager.shuffleTeams(roomId);
     });
 
     socket.on('game_action', ({ roomId, action }) => {

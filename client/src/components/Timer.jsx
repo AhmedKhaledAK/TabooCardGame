@@ -25,12 +25,12 @@ const Timer = ({ timeLeft }) => {
                     fill="transparent"
                     className={isLow ? "text-red-500" : "text-neonBlue"}
                     initial={{ pathLength: 1 }}
-                    animate={{ pathLength: timeLeft / 60 }}
+                    animate={{ pathLength: (timeLeft || 60) / 60 }}
                     transition={{ duration: 1, ease: "linear" }}
                 />
             </svg>
             <span className={`text-2xl font-bold ${isLow ? "text-red-500" : "text-white"}`}>
-                {timeLeft}
+                {timeLeft || 0}
             </span>
         </div>
     );

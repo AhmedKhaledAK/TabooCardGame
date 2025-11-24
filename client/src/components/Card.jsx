@@ -24,7 +24,7 @@ const Card = ({ card, isFlipped }) => {
                         <h2 className="text-3xl font-black text-white uppercase tracking-wider">{card?.word}</h2>
                     </div>
                     <div className="flex-1 p-6 flex flex-col items-center justify-center space-y-4 bg-white">
-                        {card?.taboo.map((word, index) => (
+                        {card?.taboo?.map((word, index) => (
                             <div key={index} className="text-xl font-bold text-gray-800 uppercase tracking-wide border-b-2 border-gray-100 w-full text-center pb-1">
                                 {word}
                             </div>

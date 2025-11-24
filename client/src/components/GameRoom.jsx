@@ -5,7 +5,7 @@ import Controls from './Controls';
 import Timer from './Timer';
 import Scoreboard from './Scoreboard';
 
-const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction }) => {
+const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction, onConfirmStartTurn, onResetGame, countdown }) => {
     const player = room.players.find(p => p.id === playerId);
     const isHost = room.players[0].id === playerId; // Simple host check
 
@@ -17,82 +17,75 @@ const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction }) => {
         teamB: room.teams.B.length
     });
 
-    if (room.gameState === 'lobby') {
-        return (
-            <div className="flex flex-col items-center min-h-screen p-8 space-y-8">
-                <h1 className="text-4xl font-bold text-white">Room: {room.id}</h1>
 
-                <div className="flex w-full max-w-4xl space-x-8">
-                    {/* Team A */}
-                    <div className="flex-1 p-6 bg-black/30 rounded-2xl border border-neonPurple/30">
-                        <h2 className="text-2xl font-bold text-neonPurple mb-4">Team A</h2>
-                        <button
-                            onClick={() => onJoinTeam('A')}
-                            className="w-full py-2 mb-4 rounded-lg border border-neonPurple text-neonPurple hover:bg-neonPurple hover:text-white transition-all"
-                        >
-                            Join Team A
-                        </button>
-                        <ul className="space-y-2">
-                            {room.teams.A.map(id => {
-                                const p = room.players.find(pl => pl.id === id);
-                                return <li key={id} className="text-white">{p?.name}</li>
-                            })}
-                        </ul>
-                    </div>
-
-                    {/* Team B */}
-                    <div className="flex-1 p-6 bg-black/30 rounded-2xl border border-neonBlue/30">
-                        <h2 className="text-2xl font-bold text-neonBlue mb-4">Team B</h2>
-                        <button
-                            onClick={() => onJoinTeam('B')}
-                            className="w-full py-2 mb-4 rounded-lg border border-neonBlue text-neonBlue hover:bg-neonBlue hover:text-white transition-all"
-                        >
-                            Join Team B
-                        </button>
-                        <ul className="space-y-2">
-                            {room.teams.B.map(id => {
-                                const p = room.players.find(pl => pl.id === id);
-                                return <li key={id} className="text-white">{p?.name}</li>
-                            })}
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="mt-8">
-                    <h3 className="text-xl text-gray-400 mb-4">Spectators / Unassigned</h3>
-                    <div className="flex flex-wrap gap-4 justify-center">
-                        {room.players.filter(p => !p.team).map(p => (
-                            <span key={p.id} className="px-4 py-2 bg-white/5 rounded-full text-gray-300">{p.name}</span>
-                        ))}
-                    </div>
-                </div>
-
-                {isHost && (
-                    <button
-                        onClick={onStartGame}
-                        disabled={room.teams.A.length === 0 || room.teams.B.length === 0}
-                        className="btn-primary text-xl px-12 py-4 mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        START GAME
-                    </button>
-                )}
-            </div>
-        );
-    }
 
     // Game Playing State
     const { currentTurn } = room;
+
+    if (!currentTurn) {
+        return <div className="text-white">Loading game state...</div>;
+    }
+
     const isMyTurnTeam = player?.team === currentTurn.team;
     const role = player?.role; // describer, watcher, guesser, spectator
 
     return (
-        <div className="flex flex-col items-center min-h-screen p-4">
+        <div className="flex flex-col items-center min-h-screen p-4 relative">
+            {/* Reset Game Button (Host Only) */}
+            {isHost && (
+                <button
+                    onClick={onResetGame}
+                    className="absolute top-4 right-4 px-4 py-2 bg-red-500/20 text-red-500 border border-red-500/50 rounded hover:bg-red-500 hover:text-white transition-all text-sm font-bold z-50"
+                >
+                    RESET GAME
+                </button>
+            )}
+
+            {/* Overlays */}
+            {room.gameState === 'waiting_for_turn' && (
+                <div className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center">
+                    {role === 'describer' ? (
+                        <div className="text-center space-y-6 animate-in fade-in zoom-in duration-300">
+                            <h2 className="text-4xl font-bold text-white">It's Your Turn!</h2>
+                            <p className="text-xl text-gray-300">You are the Describer.</p>
+                            <button
+                                onClick={onConfirmStartTurn}
+                                className="btn-primary text-2xl px-12 py-6 shadow-[0_0_30px_rgba(176,38,255,0.6)] hover:shadow-[0_0_50px_rgba(176,38,255,0.8)]"
+                            >
+                                START TURN
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="text-center animate-pulse">
+                            <h2 className="text-3xl font-bold text-white mb-2">Waiting for Turn to Start...</h2>
+                            <p className="text-gray-400">
+                                {room.players.find(p => p.id === room.currentTurn.describer)?.name} is getting ready.
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {room.gameState === 'resuming' && (
+                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center">
+                    <motion.div
+                        key={countdown}
+                        initial={{ scale: 0.5, opacity: 0 }}
+                        animate={{ scale: 1.5, opacity: 1 }}
+                        exit={{ scale: 2, opacity: 0 }}
+                        className="text-9xl font-black text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.8)]"
+                    >
+                        {countdown}
+                    </motion.div>
+                </div>
+            )}
+
             <div className="w-full max-w-6xl flex justify-between items-start p-4">
                 {/* Team A List */}
                 <div className={`p-4 rounded-xl border ${currentTurn.team === 'A' ? 'border-neonPurple bg-neonPurple/10' : 'border-white/10 bg-black/30'}`}>
                     <h3 className="text-neonPurple font-bold mb-2">Team A</h3>
                     <ul className="space-y-1">
-                        {room.teams.A.map(id => {
+                        {room.teams?.A?.map(id => {
                             const p = room.players.find(pl => pl.id === id);
                             const isMe = p?.id === playerId;
                             const isDescriber = room.currentTurn.describer === id;
@@ -112,7 +105,7 @@ const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction }) => {
                 <div className="flex flex-col items-center">
                     <div className="mb-4 px-6 py-2 bg-white/10 rounded-full border border-white/20 backdrop-blur-sm">
                         <span className="text-lg font-bold text-white">
-                            Round {room.stats.currentRound} of {room.settings.rounds}
+                            Round {room.stats?.currentRound || 1} of {room.settings?.rounds || 3}
                         </span>
                     </div>
                     <Scoreboard scores={room.scores} currentTeam={currentTurn.team} />
@@ -123,7 +116,7 @@ const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction }) => {
                 <div className={`p-4 rounded-xl border ${currentTurn.team === 'B' ? 'border-neonBlue bg-neonBlue/10' : 'border-white/10 bg-black/30'}`}>
                     <h3 className="text-neonBlue font-bold mb-2">Team B</h3>
                     <ul className="space-y-1">
-                        {room.teams.B.map(id => {
+                        {room.teams?.B?.map(id => {
                             const p = room.players.find(pl => pl.id === id);
                             const isMe = p?.id === playerId;
                             const isDescriber = room.currentTurn.describer === id;

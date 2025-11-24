@@ -80,6 +80,76 @@ const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction, onConfirm
                 </div>
             )}
 
+            {/* Game Over Overlay */}
+            {room.gameState === 'ended' && (
+                <div className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-8 animate-in fade-in duration-500">
+                    <h1 className="text-6xl font-black text-white mb-8 tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+                        GAME OVER
+                    </h1>
+
+                    {/* Winner Display */}
+                    <div className="mb-12 text-center">
+                        {room.scores.A > room.scores.B ? (
+                            <div className="text-5xl font-bold text-neonPurple animate-bounce">TEAM A WINS! 🏆</div>
+                        ) : room.scores.B > room.scores.A ? (
+                            <div className="text-5xl font-bold text-neonBlue animate-bounce">TEAM B WINS! 🏆</div>
+                        ) : (
+                            <div className="text-5xl font-bold text-gray-300">IT'S A DRAW! 🤝</div>
+                        )}
+                    </div>
+
+                    {/* Final Scores */}
+                    <div className="flex items-center space-x-16 mb-16">
+                        <div className="flex flex-col items-center">
+                            <span className="text-2xl text-neonPurple font-bold mb-2">TEAM A</span>
+                            <span className="text-8xl font-black text-white">{room.scores.A}</span>
+                        </div>
+                        <div className="text-6xl text-gray-600 font-thin">vs</div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-2xl text-neonBlue font-bold mb-2">TEAM B</span>
+                            <span className="text-8xl font-black text-white">{room.scores.B}</span>
+                        </div>
+                    </div>
+
+                    {/* Team Rosters */}
+                    <div className="grid grid-cols-2 gap-16 w-full max-w-4xl mb-12">
+                        <div className="text-center">
+                            <h3 className="text-neonPurple font-bold mb-4 border-b border-neonPurple/30 pb-2">TEAM A ROSTER</h3>
+                            <ul className="space-y-2">
+                                {room.teams?.A?.map(id => (
+                                    <li key={id} className="text-gray-300 text-lg">
+                                        {room.players.find(p => p.id === id)?.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="text-center">
+                            <h3 className="text-neonBlue font-bold mb-4 border-b border-neonBlue/30 pb-2">TEAM B ROSTER</h3>
+                            <ul className="space-y-2">
+                                {room.teams?.B?.map(id => (
+                                    <li key={id} className="text-gray-300 text-lg">
+                                        {room.players.find(p => p.id === id)?.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+
+                    {/* Reset Button */}
+                    {isHost && (
+                        <button
+                            onClick={onResetGame}
+                            className="px-12 py-4 bg-white text-black font-black text-xl rounded-full hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+                        >
+                            PLAY AGAIN
+                        </button>
+                    )}
+                    {!isHost && (
+                        <p className="text-gray-500 animate-pulse">Waiting for host to reset...</p>
+                    )}
+                </div>
+            )}
+
             <div className="w-full max-w-6xl flex justify-between items-start p-4">
                 {/* Team A List */}
                 <div className={`p-4 rounded-xl border ${currentTurn.team === 'A' ? 'border-neonPurple bg-neonPurple/10' : 'border-white/10 bg-black/30'}`}>

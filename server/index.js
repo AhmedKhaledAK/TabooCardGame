@@ -43,7 +43,11 @@ class RoomManager {
                 watcher: null,
                 card: null,
                 timeLeft: settings.timer || defaultSettings.timer,
-                timer: null
+                watcher: null,
+                card: null,
+                timeLeft: settings.timer || defaultSettings.timer,
+                timer: null,
+                skipsUsed: 0
             },
             settings: {
                 rounds: settings.rounds || defaultSettings.rounds,
@@ -155,6 +159,7 @@ class RoomManager {
         room.currentTurn.watcher = watcherId;
         room.currentTurn.card = card;
         room.currentTurn.timeLeft = room.settings.turnDuration;
+        room.currentTurn.skipsUsed = 0;
 
         // Set state to waiting_for_turn
         room.gameState = 'waiting_for_turn';
@@ -236,7 +241,9 @@ class RoomManager {
             watcher: null,
             card: null,
             timeLeft: room.settings.turnDuration,
-            timer: null
+            timeLeft: room.settings.turnDuration,
+            timer: null,
+            skipsUsed: 0
         };
 
         // Reset roles
@@ -398,18 +405,19 @@ class RoomManager {
             this.emitRoomUpdate(roomId, room);
             io.to(roomId).emit('action_feedback', { type: 'success' });
         } else if (action === 'buzz') {
-            // Penalty? Or just stop?
-            // Usually skip or -1. Let's do -1 and new card.
-            // Or just stop the card.
-            // User said: "Stops the card, subtracts a point (or awards none)"
-            // Let's subtract 1 point and get new card.
-            room.scores[room.currentTurn.team] = Math.max(0, room.scores[room.currentTurn.team] - 1);
+            // Penalty: -1 point
+            room.scores[room.currentTurn.team]--;
             const card = cards[Math.floor(Math.random() * cards.length)];
             room.currentTurn.card = card;
             this.emitRoomUpdate(roomId, room);
             io.to(roomId).emit('action_feedback', { type: 'buzz' });
         } else if (action === 'skip') {
-            // 0 points, new card
+            // First skip is free, subsequent skips cost -1
+            if (room.currentTurn.skipsUsed > 0) {
+                room.scores[room.currentTurn.team]--;
+            }
+            room.currentTurn.skipsUsed++;
+
             const card = cards[Math.floor(Math.random() * cards.length)];
             room.currentTurn.card = card;
             this.emitRoomUpdate(roomId, room);

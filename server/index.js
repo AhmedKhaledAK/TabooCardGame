@@ -57,9 +57,28 @@ class RoomManager {
             stats: {
                 currentRound: 1,
                 turnsPlayed: 0
-            }
+            },
+            gameLog: []
         });
         return roomId;
+    }
+
+    addLogEntry(roomId, type, message) {
+        const room = this.rooms.get(roomId);
+        if (!room) return;
+
+        const entry = {
+            id: Math.random().toString(36).substring(2, 9),
+            timestamp: Date.now(),
+            type, // 'info', 'success', 'error', 'warning'
+            message
+        };
+
+        room.gameLog.push(entry);
+        // Keep log size manageable? Maybe last 50 entries.
+        if (room.gameLog.length > 50) {
+            room.gameLog.shift();
+        }
     }
 
     joinRoom(roomId, playerId, playerName) {
@@ -124,6 +143,7 @@ class RoomManager {
         room.stats.turnsPlayedA = 0;
         room.stats.turnsPlayedB = 0;
 
+        this.addLogEntry(roomId, 'info', 'Game Started!');
         this.startTurn(roomId);
         return room;
     }
@@ -160,6 +180,9 @@ class RoomManager {
         room.currentTurn.card = card;
         room.currentTurn.timeLeft = room.settings.turnDuration;
         room.currentTurn.skipsUsed = 0;
+
+        const describerName = room.players.find(p => p.id === describerId)?.name || 'Unknown';
+        this.addLogEntry(roomId, 'info', `Turn started. Team ${currentTeam} is guessing. Describer: ${describerName}`);
 
         // Set state to waiting_for_turn
         room.gameState = 'waiting_for_turn';
@@ -235,12 +258,13 @@ class RoomManager {
             turnsPlayedB: 0,
             targetTurnsPerTeam: 0
         };
+        room.gameLog = [];
+        this.addLogEntry(roomId, 'info', 'Game Reset.');
         room.currentTurn = {
             team: 'A',
             describer: null,
             watcher: null,
             card: null,
-            timeLeft: room.settings.turnDuration,
             timeLeft: room.settings.turnDuration,
             timer: null,
             skipsUsed: 0
@@ -346,12 +370,14 @@ class RoomManager {
         if (turnsA === turnsB && turnsA > 0 && turnsA % maxTeamSize === 0) {
             room.gameState = 'round_ended';
             room.currentTurn.card = null; // Hide card
+            this.addLogEntry(roomId, 'info', `Round ${room.stats.currentRound - 1} ended.`);
             this.emitRoomUpdate(roomId, room);
             return;
         }
 
         // Switch teams
         room.currentTurn.team = room.currentTurn.team === 'A' ? 'B' : 'A';
+        this.addLogEntry(roomId, 'info', 'Turn ended.');
         this.startTurn(roomId); // Start next turn immediately
     }
 
@@ -359,19 +385,10 @@ class RoomManager {
         const room = this.rooms.get(roomId);
         if (!room || room.gameState !== 'round_ended') return;
 
-        // Switch teams for the new round?
-        // Usually in Taboo, turns just alternate.
-        // So we just continue. The team switch happens in endTurn normally.
-        // But we returned early in endTurn, so we didn't switch teams yet.
-        // Wait, if Team A played last to finish the round, we should switch to Team B.
-        // Let's check who played last.
-        // Actually, endTurn increments stats for the team that just played.
-        // So room.currentTurn.team is still the team that just played.
-        // So we need to switch it.
-
         room.currentTurn.team = room.currentTurn.team === 'A' ? 'B' : 'A';
 
         // Start the turn
+        this.addLogEntry(roomId, 'info', `Round ${room.stats.currentRound} started.`);
         this.startTurn(roomId);
     }
 
@@ -388,6 +405,7 @@ class RoomManager {
         room.currentTurn.describer = null;
         room.currentTurn.watcher = null;
 
+        this.addLogEntry(roomId, 'info', 'Game Over!');
         this.emitRoomUpdate(roomId, room);
     }
 
@@ -401,25 +419,33 @@ class RoomManager {
             // Taboo rules: as many cards as possible in 60s.
             // So we pick a new card.
             const card = cards[Math.floor(Math.random() * cards.length)];
+            const oldCardWord = room.currentTurn.card.word;
             room.currentTurn.card = card;
+            this.addLogEntry(roomId, 'success', `Team ${room.currentTurn.team} got "${oldCardWord}"! (+1)`);
             this.emitRoomUpdate(roomId, room);
             io.to(roomId).emit('action_feedback', { type: 'success' });
         } else if (action === 'buzz') {
             // Penalty: -1 point
             room.scores[room.currentTurn.team]--;
             const card = cards[Math.floor(Math.random() * cards.length)];
+            const oldCardWord = room.currentTurn.card.word;
             room.currentTurn.card = card;
+            this.addLogEntry(roomId, 'error', `BUZZ! "${oldCardWord}" disallowed. (-1)`);
             this.emitRoomUpdate(roomId, room);
             io.to(roomId).emit('action_feedback', { type: 'buzz' });
         } else if (action === 'skip') {
             // First skip is free, subsequent skips cost -1
+            const oldCardWord = room.currentTurn.card.word;
+            let costText = "Free";
             if (room.currentTurn.skipsUsed > 0) {
                 room.scores[room.currentTurn.team]--;
+                costText = "-1";
             }
             room.currentTurn.skipsUsed++;
 
             const card = cards[Math.floor(Math.random() * cards.length)];
             room.currentTurn.card = card;
+            this.addLogEntry(roomId, 'warning', `Skipped "${oldCardWord}". (${costText})`);
             this.emitRoomUpdate(roomId, room);
         }
     }

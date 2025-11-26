@@ -4,6 +4,7 @@ import Card from './Card';
 import Controls from './Controls';
 import Timer from './Timer';
 import Scoreboard from './Scoreboard';
+import GameLog from './GameLog';
 
 const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction, onConfirmStartTurn, onResetGame, onStartNextRound, countdown }) => {
     const player = room.players.find(p => p.id === playerId);
@@ -40,6 +41,9 @@ const GameRoom = ({ room, playerId, onJoinTeam, onStartGame, onAction, onConfirm
                     RESET GAME
                 </button>
             )}
+
+            {/* Game Log */}
+            {room.gameLog && <GameLog logs={room.gameLog} />}
 
             {/* Overlays */}
             {room.gameState === 'waiting_for_turn' && (

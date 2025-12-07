@@ -133,7 +133,9 @@ function App() {
   };
 
   if (!roomData) {
-    return <Lobby room={null} onCreateRoom={handleCreateRoom} onJoinRoom={handleJoinRoom} />;
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialRoomId = urlParams.get('room');
+    return <Lobby room={null} onCreateRoom={handleCreateRoom} onJoinRoom={handleJoinRoom} initialRoomId={initialRoomId} />;
   }
 
   return (

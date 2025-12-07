@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
-const Lobby = ({ room, playerId, onJoinTeam, onStartGame, onShuffleTeams, onUpdateSettings, onJoinRoom, onCreateRoom }) => {
+const Lobby = ({ room, playerId, onJoinTeam, onStartGame, onShuffleTeams, onUpdateSettings, onJoinRoom, onCreateRoom, initialRoomId }) => {
     const [playerName, setPlayerName] = useState('');
-    const [roomCode, setRoomCode] = useState('');
+    const [roomCode, setRoomCode] = useState(initialRoomId || '');
     const [rounds, setRounds] = useState(3);
     const [timer, setTimer] = useState(60);
 
@@ -100,7 +100,22 @@ const Lobby = ({ room, playerId, onJoinTeam, onStartGame, onShuffleTeams, onUpda
 
     return (
         <div className="flex flex-col items-center min-h-screen p-8 space-y-8">
-            <h1 className="text-4xl font-bold text-white">Room: {room.id}</h1>
+            <div className="flex flex-col items-center space-y-2">
+                <h1 className="text-4xl font-bold text-white">Room: {room.id}</h1>
+                <button
+                    onClick={() => {
+                        const link = `${window.location.origin}?room=${room.id}`;
+                        navigator.clipboard.writeText(link);
+                        alert('Invite link copied to clipboard!');
+                    }}
+                    className="text-sm text-neonBlue hover:text-white transition-colors flex items-center space-x-1"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <span>Copy Invite Link</span>
+                </button>
+            </div>
 
             <div className="flex w-full max-w-4xl space-x-8">
                 {/* Team A */}

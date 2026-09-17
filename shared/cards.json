@@ -1,0 +1,1502 @@
+[
+  {
+    "word": "Coffee",
+    "forbidden": [
+      "Drink",
+      "Caffeine",
+      "Starbucks",
+      "Morning",
+      "Bean"
+    ]
+  },
+  {
+    "word": "Superman",
+    "forbidden": [
+      "Hero",
+      "Kryptonite",
+      "Clark Kent",
+      "Cape",
+      "Fly"
+    ]
+  },
+  {
+    "word": "iPhone",
+    "forbidden": [
+      "Apple",
+      "Steve Jobs",
+      "Smartphone",
+      "Call",
+      "Siri"
+    ]
+  },
+  {
+    "word": "Pizza",
+    "forbidden": [
+      "Cheese",
+      "Pepperoni",
+      "Italy",
+      "Slice",
+      "Delivery"
+    ]
+  },
+  {
+    "word": "Dog",
+    "forbidden": [
+      "Bark",
+      "Puppy",
+      "Pet",
+      "Cat",
+      "Bone"
+    ]
+  },
+  {
+    "word": "Beach",
+    "forbidden": [
+      "Sand",
+      "Ocean",
+      "Sun",
+      "Vacation",
+      "Wave"
+    ]
+  },
+  {
+    "word": "School",
+    "forbidden": [
+      "Teacher",
+      "Student",
+      "Class",
+      "Learn",
+      "Homework"
+    ]
+  },
+  {
+    "word": "Guitar",
+    "forbidden": [
+      "Music",
+      "String",
+      "Instrument",
+      "Play",
+      "Band"
+    ]
+  },
+  {
+    "word": "Doctor",
+    "forbidden": [
+      "Hospital",
+      "Nurse",
+      "Sick",
+      "Medicine",
+      "Heal"
+    ]
+  },
+  {
+    "word": "Facebook",
+    "forbidden": [
+      "Social Media",
+      "Mark Zuckerberg",
+      "Like",
+      "Post",
+      "Friend"
+    ]
+  },
+  {
+    "word": "Soccer",
+    "forbidden": [
+      "Football",
+      "Ball",
+      "Goal",
+      "Sport",
+      "Kick"
+    ]
+  },
+  {
+    "word": "Moon",
+    "forbidden": [
+      "Night",
+      "Space",
+      "Star",
+      "Orbit",
+      "Apollo"
+    ]
+  },
+  {
+    "word": "Library",
+    "forbidden": [
+      "Book",
+      "Read",
+      "Quiet",
+      "Study",
+      "Librarian"
+    ]
+  },
+  {
+    "word": "Fire",
+    "forbidden": [
+      "Hot",
+      "Burn",
+      "Flame",
+      "Smoke",
+      "Camp"
+    ]
+  },
+  {
+    "word": "Snow",
+    "forbidden": [
+      "Cold",
+      "Winter",
+      "White",
+      "Ice",
+      "Flake"
+    ]
+  },
+  {
+    "word": "Airplane",
+    "forbidden": [
+      "Fly",
+      "Sky",
+      "Travel",
+      "Pilot",
+      "Airport"
+    ]
+  },
+  {
+    "word": "Birthday",
+    "forbidden": [
+      "Cake",
+      "Party",
+      "Candle",
+      "Gift",
+      "Age"
+    ]
+  },
+  {
+    "word": "Camera",
+    "forbidden": [
+      "Photo",
+      "Picture",
+      "Lens",
+      "Shoot",
+      "Flash"
+    ]
+  },
+  {
+    "word": "Vampire",
+    "forbidden": [
+      "Blood",
+      "Dracula",
+      "Bat",
+      "Twilight",
+      "Fangs"
+    ]
+  },
+  {
+    "word": "YouTube",
+    "forbidden": [
+      "Video",
+      "Google",
+      "Stream",
+      "Subscribe",
+      "Channel"
+    ]
+  },
+  {
+    "word": "Banana",
+    "forbidden": [
+      "Yellow",
+      "Fruit",
+      "Monkey",
+      "Peel",
+      "Split"
+    ]
+  },
+  {
+    "word": "Volcano",
+    "forbidden": [
+      "Lava",
+      "Erupt",
+      "Mountain",
+      "Ash",
+      "Hot"
+    ]
+  },
+  {
+    "word": "Penguin",
+    "forbidden": [
+      "Bird",
+      "Ice",
+      "Antarctica",
+      "Tuxedo",
+      "Waddle"
+    ]
+  },
+  {
+    "word": "Rainbow",
+    "forbidden": [
+      "Colors",
+      "Rain",
+      "Sky",
+      "Arc",
+      "Pot of Gold"
+    ]
+  },
+  {
+    "word": "Toothbrush",
+    "forbidden": [
+      "Teeth",
+      "Paste",
+      "Clean",
+      "Bristles",
+      "Dentist"
+    ]
+  },
+  {
+    "word": "Pirate",
+    "forbidden": [
+      "Ship",
+      "Treasure",
+      "Parrot",
+      "Captain",
+      "Eye Patch"
+    ]
+  },
+  {
+    "word": "Robot",
+    "forbidden": [
+      "Machine",
+      "Metal",
+      "AI",
+      "Android",
+      "Program"
+    ]
+  },
+  {
+    "word": "Umbrella",
+    "forbidden": [
+      "Rain",
+      "Wet",
+      "Open",
+      "Handle",
+      "Shade"
+    ]
+  },
+  {
+    "word": "Chess",
+    "forbidden": [
+      "Board",
+      "King",
+      "Queen",
+      "Checkmate",
+      "Pawn"
+    ]
+  },
+  {
+    "word": "Popcorn",
+    "forbidden": [
+      "Movie",
+      "Butter",
+      "Corn",
+      "Pop",
+      "Snack"
+    ]
+  },
+  {
+    "word": "Dragon",
+    "forbidden": [
+      "Fire",
+      "Wings",
+      "Fantasy",
+      "Lizard",
+      "Breathe"
+    ]
+  },
+  {
+    "word": "Keyboard",
+    "forbidden": [
+      "Type",
+      "Keys",
+      "Computer",
+      "Piano",
+      "Letters"
+    ]
+  },
+  {
+    "word": "Ghost",
+    "forbidden": [
+      "Spooky",
+      "Haunted",
+      "Boo",
+      "Dead",
+      "Sheet"
+    ]
+  },
+  {
+    "word": "Pillow",
+    "forbidden": [
+      "Bed",
+      "Sleep",
+      "Soft",
+      "Head",
+      "Feathers"
+    ]
+  },
+  {
+    "word": "Dinosaur",
+    "forbidden": [
+      "Extinct",
+      "T-Rex",
+      "Fossil",
+      "Jurassic",
+      "Reptile"
+    ]
+  },
+  {
+    "word": "Hamburger",
+    "forbidden": [
+      "Beef",
+      "Bun",
+      "Patty",
+      "McDonald's",
+      "Fries"
+    ]
+  },
+  {
+    "word": "Clock",
+    "forbidden": [
+      "Time",
+      "Hands",
+      "Tick",
+      "Wall",
+      "Alarm"
+    ]
+  },
+  {
+    "word": "Wizard",
+    "forbidden": [
+      "Magic",
+      "Wand",
+      "Harry Potter",
+      "Spell",
+      "Hat"
+    ]
+  },
+  {
+    "word": "Bicycle",
+    "forbidden": [
+      "Pedal",
+      "Wheels",
+      "Ride",
+      "Chain",
+      "Helmet"
+    ]
+  },
+  {
+    "word": "Mirror",
+    "forbidden": [
+      "Reflection",
+      "Glass",
+      "Look",
+      "Face",
+      "Bathroom"
+    ]
+  },
+  {
+    "word": "Spider",
+    "forbidden": [
+      "Web",
+      "Eight",
+      "Legs",
+      "Bug",
+      "Man"
+    ]
+  },
+  {
+    "word": "Tornado",
+    "forbidden": [
+      "Wind",
+      "Storm",
+      "Spin",
+      "Twister",
+      "Kansas"
+    ]
+  },
+  {
+    "word": "Candle",
+    "forbidden": [
+      "Wax",
+      "Wick",
+      "Light",
+      "Flame",
+      "Birthday"
+    ]
+  },
+  {
+    "word": "Minecraft",
+    "forbidden": [
+      "Blocks",
+      "Game",
+      "Creeper",
+      "Build",
+      "Mine"
+    ]
+  },
+  {
+    "word": "Taxi",
+    "forbidden": [
+      "Car",
+      "Yellow",
+      "Driver",
+      "Fare",
+      "Uber"
+    ]
+  },
+  {
+    "word": "Honey",
+    "forbidden": [
+      "Bee",
+      "Sweet",
+      "Sticky",
+      "Hive",
+      "Bear"
+    ]
+  },
+  {
+    "word": "Astronaut",
+    "forbidden": [
+      "Space",
+      "NASA",
+      "Rocket",
+      "Moon",
+      "Suit"
+    ]
+  },
+  {
+    "word": "Sushi",
+    "forbidden": [
+      "Fish",
+      "Rice",
+      "Japan",
+      "Raw",
+      "Roll"
+    ]
+  },
+  {
+    "word": "Lighthouse",
+    "forbidden": [
+      "Light",
+      "Ship",
+      "Coast",
+      "Tower",
+      "Beam"
+    ]
+  },
+  {
+    "word": "Karaoke",
+    "forbidden": [
+      "Sing",
+      "Song",
+      "Microphone",
+      "Lyrics",
+      "Bar"
+    ]
+  },
+  {
+    "word": "Zombie",
+    "forbidden": [
+      "Undead",
+      "Brains",
+      "Walk",
+      "Apocalypse",
+      "Bite"
+    ]
+  },
+  {
+    "word": "Passport",
+    "forbidden": [
+      "Travel",
+      "Country",
+      "Border",
+      "Photo",
+      "Stamp"
+    ]
+  },
+  {
+    "word": "Octopus",
+    "forbidden": [
+      "Tentacles",
+      "Eight",
+      "Ink",
+      "Sea",
+      "Arms"
+    ]
+  },
+  {
+    "word": "Microwave",
+    "forbidden": [
+      "Heat",
+      "Kitchen",
+      "Oven",
+      "Popcorn",
+      "Beep"
+    ]
+  },
+  {
+    "word": "Olympics",
+    "forbidden": [
+      "Games",
+      "Medal",
+      "Gold",
+      "Athlete",
+      "Rings"
+    ]
+  },
+  {
+    "word": "Detective",
+    "forbidden": [
+      "Mystery",
+      "Sherlock",
+      "Clue",
+      "Crime",
+      "Solve"
+    ]
+  },
+  {
+    "word": "Tattoo",
+    "forbidden": [
+      "Ink",
+      "Skin",
+      "Needle",
+      "Art",
+      "Permanent"
+    ]
+  },
+  {
+    "word": "Waterfall",
+    "forbidden": [
+      "Water",
+      "River",
+      "Fall",
+      "Niagara",
+      "Cliff"
+    ]
+  },
+  {
+    "word": "Netflix",
+    "forbidden": [
+      "Stream",
+      "Movies",
+      "Shows",
+      "Binge",
+      "Subscription"
+    ]
+  },
+  {
+    "word": "Skeleton",
+    "forbidden": [
+      "Bones",
+      "Halloween",
+      "Body",
+      "Skull",
+      "X-Ray"
+    ]
+  },
+  {
+    "word": "Cactus",
+    "forbidden": [
+      "Desert",
+      "Plant",
+      "Spikes",
+      "Needles",
+      "Water"
+    ]
+  },
+  {
+    "word": "Firefighter",
+    "forbidden": [
+      "Fire",
+      "Truck",
+      "Hose",
+      "Rescue",
+      "Hero"
+    ]
+  },
+  {
+    "word": "Igloo",
+    "forbidden": [
+      "Ice",
+      "Eskimo",
+      "House",
+      "Snow",
+      "Cold"
+    ]
+  },
+  {
+    "word": "Pancake",
+    "forbidden": [
+      "Breakfast",
+      "Syrup",
+      "Flat",
+      "Flip",
+      "Batter"
+    ]
+  },
+  {
+    "word": "Magnet",
+    "forbidden": [
+      "Metal",
+      "Attract",
+      "Fridge",
+      "North",
+      "Pull"
+    ]
+  },
+  {
+    "word": "Kangaroo",
+    "forbidden": [
+      "Australia",
+      "Jump",
+      "Pouch",
+      "Hop",
+      "Joey"
+    ]
+  },
+  {
+    "word": "Hospital",
+    "forbidden": [
+      "Doctor",
+      "Nurse",
+      "Sick",
+      "Emergency",
+      "Patient"
+    ]
+  },
+  {
+    "word": "Treasure",
+    "forbidden": [
+      "Gold",
+      "Chest",
+      "Pirate",
+      "Map",
+      "Hidden"
+    ]
+  },
+  {
+    "word": "Elevator",
+    "forbidden": [
+      "Floor",
+      "Up",
+      "Down",
+      "Button",
+      "Lift"
+    ]
+  },
+  {
+    "word": "Selfie",
+    "forbidden": [
+      "Photo",
+      "Phone",
+      "Camera",
+      "Face",
+      "Instagram"
+    ]
+  },
+  {
+    "word": "Ninja",
+    "forbidden": [
+      "Japan",
+      "Stealth",
+      "Sword",
+      "Black",
+      "Warrior"
+    ]
+  },
+  {
+    "word": "Sandwich",
+    "forbidden": [
+      "Bread",
+      "Lunch",
+      "Ham",
+      "Cheese",
+      "Subway"
+    ]
+  },
+  {
+    "word": "Thunder",
+    "forbidden": [
+      "Lightning",
+      "Storm",
+      "Loud",
+      "Rain",
+      "Clap"
+    ]
+  },
+  {
+    "word": "Mermaid",
+    "forbidden": [
+      "Fish",
+      "Tail",
+      "Ocean",
+      "Ariel",
+      "Half"
+    ]
+  },
+  {
+    "word": "Backpack",
+    "forbidden": [
+      "Bag",
+      "School",
+      "Straps",
+      "Carry",
+      "Books"
+    ]
+  },
+  {
+    "word": "Castle",
+    "forbidden": [
+      "King",
+      "Queen",
+      "Tower",
+      "Medieval",
+      "Moat"
+    ]
+  },
+  {
+    "word": "Vacuum",
+    "forbidden": [
+      "Clean",
+      "Dust",
+      "Suck",
+      "Floor",
+      "Carpet"
+    ]
+  },
+  {
+    "word": "Giraffe",
+    "forbidden": [
+      "Neck",
+      "Tall",
+      "Africa",
+      "Spots",
+      "Animal"
+    ]
+  },
+  {
+    "word": "Headphones",
+    "forbidden": [
+      "Music",
+      "Ears",
+      "Listen",
+      "Sound",
+      "Wireless"
+    ]
+  },
+  {
+    "word": "Cinderella",
+    "forbidden": [
+      "Glass Slipper",
+      "Midnight",
+      "Prince",
+      "Disney",
+      "Pumpkin"
+    ]
+  },
+  {
+    "word": "Bowling",
+    "forbidden": [
+      "Pins",
+      "Ball",
+      "Strike",
+      "Lane",
+      "Spare"
+    ]
+  },
+  {
+    "word": "Parachute",
+    "forbidden": [
+      "Jump",
+      "Sky",
+      "Fall",
+      "Plane",
+      "Open"
+    ]
+  },
+  {
+    "word": "Wedding",
+    "forbidden": [
+      "Marriage",
+      "Bride",
+      "Groom",
+      "Ring",
+      "Dress"
+    ]
+  },
+  {
+    "word": "Shark",
+    "forbidden": [
+      "Fish",
+      "Teeth",
+      "Ocean",
+      "Jaws",
+      "Fin"
+    ]
+  },
+  {
+    "word": "Tennis",
+    "forbidden": [
+      "Racket",
+      "Ball",
+      "Net",
+      "Court",
+      "Serve"
+    ]
+  },
+  {
+    "word": "Alien",
+    "forbidden": [
+      "Space",
+      "UFO",
+      "Mars",
+      "Green",
+      "Extraterrestrial"
+    ]
+  },
+  {
+    "word": "Chocolate",
+    "forbidden": [
+      "Sweet",
+      "Cocoa",
+      "Candy",
+      "Brown",
+      "Bar"
+    ]
+  },
+  {
+    "word": "Hammer",
+    "forbidden": [
+      "Nail",
+      "Tool",
+      "Hit",
+      "Build",
+      "Thor"
+    ]
+  },
+  {
+    "word": "Bridge",
+    "forbidden": [
+      "River",
+      "Cross",
+      "Golden Gate",
+      "Over",
+      "Build"
+    ]
+  },
+  {
+    "word": "Snowman",
+    "forbidden": [
+      "Frosty",
+      "Carrot",
+      "Winter",
+      "Build",
+      "Cold"
+    ]
+  },
+  {
+    "word": "Pyramid",
+    "forbidden": [
+      "Egypt",
+      "Triangle",
+      "Pharaoh",
+      "Tomb",
+      "Desert"
+    ]
+  },
+  {
+    "word": "Lemonade",
+    "forbidden": [
+      "Lemon",
+      "Drink",
+      "Sour",
+      "Stand",
+      "Sugar"
+    ]
+  },
+  {
+    "word": "Zoo",
+    "forbidden": [
+      "Animals",
+      "Cage",
+      "Visit",
+      "Lion",
+      "Keeper"
+    ]
+  },
+  {
+    "word": "Scarecrow",
+    "forbidden": [
+      "Crow",
+      "Field",
+      "Straw",
+      "Farm",
+      "Wizard of Oz"
+    ]
+  },
+  {
+    "word": "Compass",
+    "forbidden": [
+      "North",
+      "Direction",
+      "Needle",
+      "Map",
+      "Navigate"
+    ]
+  },
+  {
+    "word": "Basketball",
+    "forbidden": [
+      "Hoop",
+      "Dribble",
+      "NBA",
+      "Court",
+      "Dunk"
+    ]
+  },
+  {
+    "word": "Sunglasses",
+    "forbidden": [
+      "Eyes",
+      "Sun",
+      "Shades",
+      "Dark",
+      "Wear"
+    ]
+  },
+  {
+    "word": "Map",
+    "forbidden": [
+      "Directions",
+      "Country",
+      "Location",
+      "Google",
+      "Navigate"
+    ]
+  },
+  {
+    "word": "Crown",
+    "forbidden": [
+      "King",
+      "Queen",
+      "Head",
+      "Royal",
+      "Jewels"
+    ]
+  },
+  {
+    "word": "Ladder",
+    "forbidden": [
+      "Climb",
+      "Steps",
+      "Rungs",
+      "Up",
+      "Tall"
+    ]
+  },
+  {
+    "word": "Pajamas",
+    "forbidden": [
+      "Sleep",
+      "Night",
+      "Bed",
+      "Clothes",
+      "Comfy"
+    ]
+  },
+  {
+    "word": "Unicorn",
+    "forbidden": [
+      "Horn",
+      "Horse",
+      "Magic",
+      "Rainbow",
+      "Mythical"
+    ]
+  },
+  {
+    "word": "Recycling",
+    "forbidden": [
+      "Bin",
+      "Plastic",
+      "Environment",
+      "Reuse",
+      "Green"
+    ]
+  },
+  {
+    "word": "Rollercoaster",
+    "forbidden": [
+      "Ride",
+      "Theme Park",
+      "Loop",
+      "Scream",
+      "Track"
+    ]
+  },
+  {
+    "word": "Toaster",
+    "forbidden": [
+      "Bread",
+      "Kitchen",
+      "Brown",
+      "Pop",
+      "Breakfast"
+    ]
+  },
+  {
+    "word": "Batman",
+    "forbidden": [
+      "Gotham",
+      "Joker",
+      "Robin",
+      "Bruce Wayne",
+      "Cape"
+    ]
+  },
+  {
+    "word": "Garden",
+    "forbidden": [
+      "Flowers",
+      "Plants",
+      "Grow",
+      "Soil",
+      "Backyard"
+    ]
+  },
+  {
+    "word": "Anchor",
+    "forbidden": [
+      "Ship",
+      "Boat",
+      "Heavy",
+      "Sea",
+      "Drop"
+    ]
+  },
+  {
+    "word": "Whale",
+    "forbidden": [
+      "Ocean",
+      "Big",
+      "Blue",
+      "Mammal",
+      "Moby Dick"
+    ]
+  },
+  {
+    "word": "Fireworks",
+    "forbidden": [
+      "Explode",
+      "Sky",
+      "Colors",
+      "New Year",
+      "Boom"
+    ]
+  },
+  {
+    "word": "Microphone",
+    "forbidden": [
+      "Sing",
+      "Voice",
+      "Speak",
+      "Loud",
+      "Karaoke"
+    ]
+  },
+  {
+    "word": "Jungle",
+    "forbidden": [
+      "Forest",
+      "Tarzan",
+      "Trees",
+      "Rain",
+      "Animals"
+    ]
+  },
+  {
+    "word": "Password",
+    "forbidden": [
+      "Secret",
+      "Login",
+      "Account",
+      "Letters",
+      "Forget"
+    ]
+  },
+  {
+    "word": "Dentist",
+    "forbidden": [
+      "Teeth",
+      "Cavity",
+      "Drill",
+      "Floss",
+      "Clean"
+    ]
+  },
+  {
+    "word": "Popsicle",
+    "forbidden": [
+      "Ice",
+      "Stick",
+      "Summer",
+      "Cold",
+      "Frozen"
+    ]
+  },
+  {
+    "word": "Tiger",
+    "forbidden": [
+      "Stripes",
+      "Cat",
+      "Orange",
+      "Jungle",
+      "Roar"
+    ]
+  },
+  {
+    "word": "Balloon",
+    "forbidden": [
+      "Air",
+      "Party",
+      "Pop",
+      "Float",
+      "Helium"
+    ]
+  },
+  {
+    "word": "Trophy",
+    "forbidden": [
+      "Win",
+      "Award",
+      "Cup",
+      "Gold",
+      "Champion"
+    ]
+  },
+  {
+    "word": "Hot Dog",
+    "forbidden": [
+      "Sausage",
+      "Bun",
+      "Mustard",
+      "Ketchup",
+      "Frank"
+    ]
+  },
+  {
+    "word": "Owl",
+    "forbidden": [
+      "Bird",
+      "Night",
+      "Wise",
+      "Hoot",
+      "Eyes"
+    ]
+  },
+  {
+    "word": "Blanket",
+    "forbidden": [
+      "Warm",
+      "Bed",
+      "Cover",
+      "Soft",
+      "Wool"
+    ]
+  },
+  {
+    "word": "Carnival",
+    "forbidden": [
+      "Rides",
+      "Fair",
+      "Clown",
+      "Games",
+      "Cotton Candy"
+    ]
+  },
+  {
+    "word": "Cookie",
+    "forbidden": [
+      "Bake",
+      "Chocolate Chip",
+      "Sweet",
+      "Jar",
+      "Monster"
+    ]
+  },
+  {
+    "word": "Hurricane",
+    "forbidden": [
+      "Storm",
+      "Wind",
+      "Rain",
+      "Ocean",
+      "Eye"
+    ]
+  },
+  {
+    "word": "Fortnite",
+    "forbidden": [
+      "Game",
+      "Battle Royale",
+      "Build",
+      "Dance",
+      "Epic"
+    ]
+  },
+  {
+    "word": "Grandma",
+    "forbidden": [
+      "Grandpa",
+      "Family",
+      "Old",
+      "Mother",
+      "Cookies"
+    ]
+  },
+  {
+    "word": "Spaceship",
+    "forbidden": [
+      "Rocket",
+      "Launch",
+      "Fly",
+      "Alien",
+      "Star Wars"
+    ]
+  },
+  {
+    "word": "Wallet",
+    "forbidden": [
+      "Money",
+      "Cards",
+      "Pocket",
+      "Leather",
+      "Cash"
+    ]
+  },
+  {
+    "word": "Earthquake",
+    "forbidden": [
+      "Shake",
+      "Ground",
+      "Richter",
+      "Disaster",
+      "Fault"
+    ]
+  },
+  {
+    "word": "Snake",
+    "forbidden": [
+      "Slither",
+      "Reptile",
+      "Venom",
+      "Hiss",
+      "Python"
+    ]
+  },
+  {
+    "word": "Mountain",
+    "forbidden": [
+      "Climb",
+      "Peak",
+      "Everest",
+      "High",
+      "Snow"
+    ]
+  },
+  {
+    "word": "Emoji",
+    "forbidden": [
+      "Smiley",
+      "Text",
+      "Face",
+      "Phone",
+      "Icon"
+    ]
+  },
+  {
+    "word": "Knight",
+    "forbidden": [
+      "Armor",
+      "Sword",
+      "Horse",
+      "Castle",
+      "Chess"
+    ]
+  },
+  {
+    "word": "Circus",
+    "forbidden": [
+      "Clown",
+      "Tent",
+      "Acrobat",
+      "Elephant",
+      "Ringmaster"
+    ]
+  },
+  {
+    "word": "Coconut",
+    "forbidden": [
+      "Palm",
+      "Tree",
+      "Milk",
+      "Tropical",
+      "Hard"
+    ]
+  },
+  {
+    "word": "Traffic Light",
+    "forbidden": [
+      "Red",
+      "Green",
+      "Yellow",
+      "Stop",
+      "Go"
+    ]
+  },
+  {
+    "word": "Frog",
+    "forbidden": [
+      "Green",
+      "Jump",
+      "Pond",
+      "Ribbit",
+      "Toad"
+    ]
+  },
+  {
+    "word": "Genie",
+    "forbidden": [
+      "Lamp",
+      "Wish",
+      "Three",
+      "Aladdin",
+      "Magic"
+    ]
+  },
+  {
+    "word": "Soap",
+    "forbidden": [
+      "Wash",
+      "Clean",
+      "Bubbles",
+      "Hands",
+      "Bar"
+    ]
+  },
+  {
+    "word": "Sunflower",
+    "forbidden": [
+      "Yellow",
+      "Seeds",
+      "Tall",
+      "Plant",
+      "Sun"
+    ]
+  },
+  {
+    "word": "Podcast",
+    "forbidden": [
+      "Listen",
+      "Episode",
+      "Audio",
+      "Host",
+      "Talk"
+    ]
+  },
+  {
+    "word": "Skateboard",
+    "forbidden": [
+      "Wheels",
+      "Ride",
+      "Tricks",
+      "Board",
+      "Ramp"
+    ]
+  },
+  {
+    "word": "Marathon",
+    "forbidden": [
+      "Run",
+      "Race",
+      "Miles",
+      "Long",
+      "Finish"
+    ]
+  },
+  {
+    "word": "Lottery",
+    "forbidden": [
+      "Ticket",
+      "Win",
+      "Numbers",
+      "Jackpot",
+      "Money"
+    ]
+  },
+  {
+    "word": "Moustache",
+    "forbidden": [
+      "Hair",
+      "Face",
+      "Lip",
+      "Beard",
+      "Shave"
+    ]
+  },
+  {
+    "word": "Tent",
+    "forbidden": [
+      "Camping",
+      "Outdoors",
+      "Sleep",
+      "Poles",
+      "Nylon"
+    ]
+  },
+  {
+    "word": "Spaghetti",
+    "forbidden": [
+      "Pasta",
+      "Italian",
+      "Noodles",
+      "Meatballs",
+      "Sauce"
+    ]
+  },
+  {
+    "word": "Alarm Clock",
+    "forbidden": [
+      "Wake",
+      "Morning",
+      "Snooze",
+      "Ring",
+      "Time"
+    ]
+  },
+  {
+    "word": "Superhero",
+    "forbidden": [
+      "Power",
+      "Cape",
+      "Save",
+      "Villain",
+      "Marvel"
+    ]
+  },
+  {
+    "word": "Avocado",
+    "forbidden": [
+      "Guacamole",
+      "Green",
+      "Toast",
+      "Pit",
+      "Fruit"
+    ]
+  }
+]

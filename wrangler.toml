@@ -1,0 +1,35 @@
+name = "laff-w-dawaran"
+main = "worker/index.js"
+compatibility_date = "2026-05-01"
+
+# Production hostname. Uncomment once the Discord app exists and you're ready
+# to deploy; custom_domain makes Wrangler create the DNS record and TLS cert on
+# the twograins.app zone itself. Without it, deploy lands on *.workers.dev.
+# routes = [
+#   { pattern = "laff.twograins.app", custom_domain = true }
+# ]
+
+# The built Vite output. Real files are served straight from the edge; any
+# other page path gets index.html. /api/* always reaches the Worker first.
+# Response headers for the files (CSP, caching) are in client/public/_headers.
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[vars]
+# The OAuth2 client ID is public (it ships in the client bundle anyway).
+# Fill in your Discord application's ID here AND in .env as
+# VITE_DISCORD_CLIENT_ID. The client SECRET never goes here; see README.
+DISCORD_CLIENT_ID = ""
+
+# One Durable Object per room: a Discord Activity instance or a web join code.
+[[durable_objects.bindings]]
+name = "ROOMS"
+class_name = "Room"
+
+# SQLite-backed, which is what the Cloudflare free plan allows.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Room"]

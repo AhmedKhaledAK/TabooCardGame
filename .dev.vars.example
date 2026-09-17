@@ -1,0 +1,4 @@
+# Copy to .dev.vars . Read by `wrangler dev` only; never committed, never sent
+# to the browser. In production set these with `wrangler secret put`.
+DISCORD_CLIENT_ID=your_discord_application_id
+DISCORD_CLIENT_SECRET=your_discord_client_secret

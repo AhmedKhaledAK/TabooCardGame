@@ -1,15 +1,46 @@
 {
-    "name": "taboo-card-game",
-    "version": "1.0.0",
-    "description": "Taboo Card Game",
-    "scripts": {
-        "install-all": "npm install --prefix client && npm install --prefix server",
-        "build": "npm run install-all && npm run build --prefix client",
-        "start": "node server/index.js"
-    },
-    "engines": {
-        "node": ">=18.0.0"
-    },
-    "author": "",
-    "license": "ISC"
+  "name": "laff-w-dawaran",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Laff w Dawaran: an Egyptian-flavoured team word-guessing party game, playable as a Discord Activity or on the web",
+  "scripts": {
+    "dev": "vite",
+    "dev:api": "wrangler dev --port 8788",
+    "dev:test": "wrangler dev --port 8788 --var ALLOW_UNVERIFIED:true",
+    "tunnel": "cloudflared tunnel --url http://localhost:5173",
+    "build": "vite build",
+    "preview": "npm run build && wrangler dev --port 8788",
+    "deploy": "npm run build && wrangler deploy",
+    "lint": "eslint .",
+    "test": "node --test scripts/game.test.mjs",
+    "test:room": "node scripts/test-room.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@discord/embedded-app-sdk": "^2.5.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "@fontsource/bungee": "^5.3.0",
+    "framer-motion": "^13.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^10.10.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17.12.0",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.0",
+    "wrangler": "^4.86.0",
+    "ws": "^8.21.3"
+  },
+  "overrides": {
+    "workerd": "1.20260426.1"
+  }
 }

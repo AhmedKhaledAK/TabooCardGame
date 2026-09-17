@@ -1,4 +1,4 @@
-/* global WebSocketPair */
+/* global WebSocketPair, WebSocketRequestResponsePair */
 import { DurableObject } from 'cloudflare:workers';
 import * as G from '../shared/game.js';
 
@@ -27,6 +27,8 @@ export class Room extends DurableObject {
     super(ctx, env);
     /** Access token -> verified Discord user, so a reconnect doesn't re-ask Discord. */
     this.verified = new Map();
+    // Keep-alive pings are answered by the runtime without waking the room.
+    ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('{"t":"ping"}', '{"t":"pong"}'));
     ctx.blockConcurrencyWhile(async () => {
       const s = await ctx.storage.get('state');
       // A state from an older build is dropped rather than half-read.
@@ -132,9 +134,6 @@ export class Room extends DurableObject {
       case 'reset':
         changed = G.reset(s, me, now);
         break;
-      case 'ping':
-        ws.send(JSON.stringify({ t: 'pong', now }));
-        return;
     }
     if (changed) await this.commit();
   }

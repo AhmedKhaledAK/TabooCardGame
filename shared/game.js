@@ -22,6 +22,10 @@ export { CARDS };
 
 export const TEAMS = ['A', 'B'];
 export const COUNTDOWN_MS = 3000;
+/** A turn starts by itself this long after it is dealt, if nobody presses go. */
+export const READY_MS = 15_000;
+/** And the next round after this long. The host can start either sooner. */
+export const BREAK_MS = 20_000;
 export const LIMITS = {
   rounds: { min: 1, max: 10, def: 3 },
   seconds: { min: 10, max: 180, def: 60 },
@@ -35,7 +39,7 @@ export const CLUE_MAX = 80;
 export const GUESS_GAP_MS = 350;
 
 /** Bump when the stored shape changes; the room discards older state. */
-export const STATE_VERSION = 2;
+export const STATE_VERSION = 3;
 
 const other = (team) => (team === 'A' ? 'B' : 'A');
 const clamp = (n, { min, max, def }) => {
@@ -59,6 +63,7 @@ export function createState(code, rand = Math.random) {
     // Rotation cursors survive rounds so everybody gets a go, in order.
     cursor: { describe: { A: 0, B: 0 }, watch: { A: 0, B: 0 } },
     turn: null,
+    breakEndsAt: null, // round_over only: when the next round starts by itself
     deck: shuffle(CARDS.map((_, i) => i), rand),
     deckPos: 0,
     log: [],
@@ -174,6 +179,9 @@ function repair(s, now) {
       } else {
         t.describer = null;
       }
+      // A new storyteller gets the full grace period; a missing one stalls the
+      // turn until someone is back or the host passes it.
+      t.readyEndsAt = t.describer ? now + READY_MS : null;
     }
     if (!t.watcher || !online(s, t.watcher)) {
       t.watcher = pick(s, 'watch', other(t.team));
@@ -258,6 +266,7 @@ function beginTurn(s, team, now, rand) {
     unlocked: [],
     skips: 0,
     hits: 0,
+    readyEndsAt: null,
     countdownEndsAt: null,
     endsAt: null,
     feed: [], // typed guesses and clues this turn, oldest first
@@ -265,7 +274,9 @@ function beginTurn(s, team, now, rand) {
     lastGuess: {}, // player id -> time of their last guess
   };
   s.phase = 'ready';
+  s.breakEndsAt = null;
   if (s.turn.describer) {
+    s.turn.readyEndsAt = now + READY_MS;
     log(s, now, 'info', `${teamName(team)} is up. ${nameOf(s, s.turn.describer)} tells the story.`);
   }
 }
@@ -273,13 +284,20 @@ function beginTurn(s, team, now, rand) {
 /** The storyteller says go. */
 export function goLive(s, id, now) {
   if (s.phase !== 'ready' || s.turn.describer !== id) return false;
-  s.phase = 'countdown';
-  s.turn.countdownEndsAt = now + COUNTDOWN_MS;
+  countdown(s, now);
   return true;
+}
+
+function countdown(s, now) {
+  s.phase = 'countdown';
+  s.turn.readyEndsAt = null;
+  s.turn.countdownEndsAt = now + COUNTDOWN_MS;
 }
 
 /** When the room must next call `tick`, or null if nothing is pending. */
 export function nextDeadline(s) {
+  if (s.phase === 'ready') return s.turn.readyEndsAt;
+  if (s.phase === 'round_over') return s.breakEndsAt;
   if (s.phase === 'countdown') return s.turn.countdownEndsAt;
   if (s.phase === 'playing') return s.turn.endsAt;
   return null;
@@ -288,6 +306,14 @@ export function nextDeadline(s) {
 /** Advance any timed phase whose deadline has passed. Safe to call anytime. */
 export function tick(s, now, rand = Math.random) {
   let changed = false;
+  if (s.phase === 'round_over' && s.breakEndsAt != null && now >= s.breakEndsAt) {
+    beginRound(s, s.breakEndsAt, rand);
+    changed = true;
+  }
+  if (s.phase === 'ready' && s.turn.readyEndsAt != null && now >= s.turn.readyEndsAt) {
+    countdown(s, s.turn.readyEndsAt);
+    changed = true;
+  }
   if (s.phase === 'countdown' && now >= s.turn.countdownEndsAt) {
     s.phase = 'playing';
     // Measured from the countdown's end, not from when the alarm happened to fire.
@@ -314,6 +340,7 @@ function endTurn(s, now, rand, passed = false) {
       log(s, now, 'info', A === B ? `It's a draw at ${A}.` : `${teamName(A > B ? 'A' : 'B')} wins ${Math.max(A, B)} to ${Math.min(A, B)}!`);
     } else {
       s.phase = 'round_over';
+      s.breakEndsAt = now + BREAK_MS;
     }
     return;
   }
@@ -449,6 +476,7 @@ export function clue(s, id, text, now, rand = Math.random) {
 function toLobby(s, now) {
   s.phase = 'lobby';
   s.turn = null;
+  s.breakEndsAt = null;
   s.round = 0;
   s.scores = { A: 0, B: 0 };
   for (const p of s.players.filter((x) => !x.online)) removePlayer(s, p.id);
@@ -484,12 +512,14 @@ export function viewFor(s, viewerId, now) {
     roundLen: s.roundLen,
     roundTurns: s.roundTurns,
     canStart: canStart(s),
+    breakEndsAt: s.breakEndsAt,
     turn: t && {
       team: t.team,
       describer: t.describer,
       watcher: t.watcher,
       skips: t.skips,
       hits: t.hits,
+      readyEndsAt: t.readyEndsAt,
       countdownEndsAt: t.countdownEndsAt,
       endsAt: t.endsAt,
       cardNo: t.cardNo,

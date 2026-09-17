@@ -238,6 +238,45 @@ test('only the storyteller can go live, once', () => {
   assert.equal(G.goLive(s, 'a1', T0), false);
 });
 
+test('turns and rounds start by themselves if nobody presses go', () => {
+  const { s, host } = room({ A: ['a1'], B: ['b1'] }, { rounds: 2 });
+  G.startGame(s, host, T0);
+  assert.equal(G.nextDeadline(s), T0 + G.READY_MS);
+  assert.equal(G.tick(s, T0 + G.READY_MS - 1), false);
+  assert.ok(G.tick(s, T0 + G.READY_MS));
+  assert.equal(s.phase, 'countdown');
+  // The countdown runs from the deadline, not from a late alarm.
+  G.tick(s, T0 + G.READY_MS + 500);
+  assert.equal(s.turn.countdownEndsAt, T0 + G.READY_MS + G.COUNTDOWN_MS);
+  G.tick(s, s.turn.countdownEndsAt);
+  assert.equal(s.phase, 'playing');
+  // Both turns of round 1 run out.
+  G.tick(s, s.turn.endsAt);
+  G.tick(s, s.turn.readyEndsAt);
+  G.tick(s, s.turn.countdownEndsAt);
+  const end = s.turn.endsAt;
+  G.tick(s, end);
+  assert.equal(s.phase, 'round_over');
+  assert.equal(G.nextDeadline(s), end + G.BREAK_MS);
+  G.tick(s, end + G.BREAK_MS);
+  assert.equal(s.phase, 'ready');
+  assert.equal(s.round, 2);
+  assert.equal(s.breakEndsAt, null);
+});
+
+test('a stalled turn waits, and a new storyteller gets a fresh grace period', () => {
+  const { s, host } = room({ A: ['a1', 'a2'], B: ['b1'] });
+  G.startGame(s, host, T0);
+  G.leave(s, 'a1', T0 + 10_000);
+  assert.equal(s.turn.describer, 'a2');
+  assert.equal(s.turn.readyEndsAt, T0 + 10_000 + G.READY_MS);
+  G.leave(s, 'a2', T0 + 11_000);
+  assert.equal(s.turn.readyEndsAt, null);
+  assert.equal(G.nextDeadline(s), null);
+  assert.equal(G.tick(s, T0 + 999_999), false);
+  assert.equal(s.phase, 'ready');
+});
+
 test('turn clock is measured from the end of the countdown', () => {
   const { s, host } = room({ A: ['a1'], B: ['b1'] }, { seconds: 30 });
   G.startGame(s, host, T0);

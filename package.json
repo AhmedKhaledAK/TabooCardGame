@@ -6,6 +6,7 @@
   "description": "Laff w Dawaran: an Egyptian-flavoured team word-guessing party game, playable as a Discord Activity or on the web",
   "scripts": {
     "dev": "vite",
+    "dev:tunnel": "vite --mode tunnel",
     "dev:api": "wrangler dev --port 8788",
     "dev:test": "wrangler dev --port 8788 --var ALLOW_UNVERIFIED:true",
     "tunnel": "cloudflared tunnel --url http://localhost:5173",
@@ -21,8 +22,8 @@
   },
   "dependencies": {
     "@discord/embedded-app-sdk": "^2.5.0",
-    "@fontsource-variable/space-grotesk": "^5.3.0",
-    "@fontsource/bungee": "^5.3.0",
+    "@fontsource-variable/cairo": "^5.3.0",
+    "@fontsource/lalezar": "^5.3.0",
     "framer-motion": "^13.4.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

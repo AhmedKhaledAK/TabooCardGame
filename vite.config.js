@@ -8,6 +8,9 @@ import tailwindcss from '@tailwindcss/vite';
 // one origin -- the same shape as production and as Discord's proxy.
 export default defineConfig(({ mode }) => ({
   root: 'client',
+  // .env sits at the repo root, next to .dev.vars. Without this, Vite would
+  // look for it inside client/ and quietly build with no client id.
+  envDir: '..',
   publicDir: 'public',
   build: { outDir: '../dist', emptyOutDir: true },
   plugins: [react(), tailwindcss()],

@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as G from '../shared/game.js';
 import { isAnswer, mentions } from '../shared/match.js';
+import { DEFAULT_PACKS, PACKS } from '../shared/cards/index.js';
 
 const T0 = 1_000_000;
 
@@ -56,7 +57,7 @@ test('start needs someone online on both teams', () => {
 test('settings are clamped', () => {
   const { s, host } = room();
   G.updateSettings(s, host, { rounds: 99, seconds: 1 });
-  assert.deepEqual(s.settings, { rounds: 10, seconds: 10 });
+  assert.deepEqual(s.settings, { rounds: 10, seconds: 10, packs: DEFAULT_PACKS });
   G.updateSettings(s, host, { seconds: 'abc' });
   assert.equal(s.settings.seconds, 60);
 });
@@ -402,12 +403,13 @@ test('deck deals every card before repeating', () => {
   const { s, host } = room();
   G.startGame(s, host, T0);
   const live = goLive(s);
+  const size = s.deck.length;
   const dealt = new Set([s.turn.card]);
-  for (let i = 1; i < G.CARDS.length; i++) {
+  for (let i = 1; i < size; i++) {
     G.act(s, 'a1', 'skip', live);
     dealt.add(s.turn.card);
   }
-  assert.equal(dealt.size, G.CARDS.length);
+  assert.equal(dealt.size, size, 'every card of the chosen pack');
   G.act(s, 'a1', 'skip', live); // reshuffles without throwing
   assert.ok(G.CARDS[s.turn.card]);
 });
@@ -420,15 +422,70 @@ test('names are trimmed and bounded', () => {
 
 test('deck data is well formed', () => {
   assert.ok(G.CARDS.length >= 100);
-  const words = new Set();
-  for (const c of G.CARDS) {
-    assert.equal(typeof c.word, 'string');
-    assert.equal(c.forbidden.length, 5, c.word);
-    // A forbidden word that counted as the answer would score by accident.
-    for (const f of c.forbidden) assert.ok(!isAnswer(f, c.word), `${c.word} / ${f}`);
-    assert.ok(!words.has(c.word.toLowerCase()), `duplicate ${c.word}`);
-    words.add(c.word.toLowerCase());
+  assert.ok(PACKS.length >= 2);
+  for (const p of PACKS) {
+    assert.ok(p.count >= 30, `${p.id} is thin`);
+    const words = new Set();
+    for (const c of G.CARDS.slice(p.from, p.from + p.count)) {
+      assert.equal(typeof c.word, 'string');
+      assert.equal(c.lang, p.lang, c.word);
+      assert.equal(c.forbidden.length, 5, c.word);
+      // A forbidden word that counted as the answer would score by accident.
+      for (const f of c.forbidden) assert.ok(!isAnswer(f, c.word), `${p.id}: ${c.word} / ${f}`);
+      assert.ok(!words.has(c.word.toLowerCase()), `${p.id}: duplicate ${c.word}`);
+      words.add(c.word.toLowerCase());
+    }
   }
+});
+
+test('the deck is dealt from the chosen packs only', () => {
+  const { s, host } = room();
+  const arabic = PACKS.find((p) => p.lang === 'ar');
+  const inPack = (i) => i >= arabic.from && i < arabic.from + arabic.count;
+
+  assert.deepEqual(s.settings.packs, DEFAULT_PACKS);
+  assert.ok(!s.deck.some(inPack), 'the default deck has no Arabic cards in it');
+
+  assert.ok(G.updateSettings(s, host, { packs: [arabic.id] }));
+  assert.deepEqual(s.settings.packs, [arabic.id]);
+  assert.equal(s.deck.length, arabic.count);
+  assert.equal(s.deckPos, 0, 'switching packs deals from the top');
+  assert.ok(s.deck.every(inPack));
+
+  // Unknown names, and an empty list, leave the deck as it was.
+  assert.equal(G.updateSettings(s, host, { packs: ['nope'] }), false);
+  assert.equal(G.updateSettings(s, host, { packs: [] }), false);
+  assert.equal(G.updateSettings(s, host, { packs: 'ar' }), false);
+  assert.deepEqual(s.settings.packs, [arabic.id]);
+
+  // Two packs are one deck, and the same list again changes nothing.
+  assert.ok(G.updateSettings(s, host, { packs: [arabic.id, DEFAULT_PACKS[0]] }));
+  assert.equal(s.deck.length, arabic.count + PACKS.find((p) => p.id === DEFAULT_PACKS[0]).count);
+  assert.equal(G.updateSettings(s, host, { packs: [DEFAULT_PACKS[0], arabic.id] }), false, 'order is the catalog order');
+
+  G.startGame(s, host, T0);
+  assert.equal(G.updateSettings(s, host, { packs: [arabic.id] }), false, 'not mid-game');
+});
+
+test('the pack catalog is sent in the lobby, and holds no words', () => {
+  const { s, host } = room();
+  const lobby = G.viewFor(s, host, T0);
+  assert.equal(lobby.catalog.length, PACKS.length);
+  assert.deepEqual(Object.keys(lobby.catalog[0]).sort(), ['blurb', 'count', 'group', 'id', 'lang', 'name']);
+  assert.ok(!JSON.stringify(lobby.catalog).includes(G.CARDS[0].word));
+  G.startGame(s, host, T0);
+  assert.equal(G.viewFor(s, host, T0).catalog, null, 'not on every guess during a game');
+});
+
+test('Arabic guesses are matched the way people type them', () => {
+  assert.ok(isAnswer('قهوه', 'قهوة'), 'ta marbuta and ha are the same key');
+  assert.ok(isAnswer('اهرامات', 'أهرامات'), 'the hamza is optional');
+  assert.ok(isAnswer('الأهرامات', 'أهرامات'), 'so is the definite article');
+  assert.ok(isAnswer('قَهوة', 'قهوة'), 'harakat are ignored');
+  assert.ok(isAnswer('مسلسلات', 'مسلسل') === false, 'a different word is still a different word');
+  assert.ok(!isAnswer('قمر', 'عمر'), 'short words must be exact');
+  assert.ok(mentions('دي حاجة في السما زي القمر', 'قمر'));
+  assert.ok(mentions('الكورة في الملعب', 'كورة', { typos: false }), 'the article does not hide a red word');
 });
 
 test('matching: forgiving for guesses, strict where a point is at stake', () => {

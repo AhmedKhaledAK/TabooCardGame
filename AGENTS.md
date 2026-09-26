@@ -43,8 +43,10 @@ npm run dev:test & npm run test:room   # when worker/ or shared/ changed
   - A clue that slipped is stored with `text: null`.
   - The deck never leaves the server.
   - Any new field that could reveal the word must go through the same filter.
-- Bump `STATE_VERSION` whenever the stored state shape changes. Rooms drop state from an
-  older version rather than half-reading it.
+- Bump `STATE_VERSION` whenever the stored state shape changes, **and whenever a word pack
+  changes**: a card is stored as its index into the flattened `CARDS` array, so adding or
+  removing cards shifts every index after them. Rooms drop state from an older version
+  rather than half-reading it.
 - Identity: in Discord rooms the server verifies the access token with Discord
   (`/users/@me`). Claimed ids are accepted only in web rooms, or when
   `ALLOW_UNVERIFIED=true` (the `dev:test` script). Never make claimed ids work in
@@ -63,8 +65,19 @@ npm run dev:test & npm run test:room   # when worker/ or shared/ changed
   grandma/grandpa are different words. A missing letter, an extra letter, or two
   swapped letters are fine.
 - A guess must be the whole answer, apart from articles and spacing. Lists don't count.
-- The unit tests guard the deck: no duplicate words, and no forbidden word that would
-  count as its card's answer.
+- The unit tests guard every pack: 5 forbidden words per card, no duplicate words inside a
+  pack, and no forbidden word that would count as its card's answer.
+- Arabic is folded before matching: harakat, hamza carriers, tatweel, `ة`/`ه`, `ى`/`ي` and a
+  leading `ال`. A pack's `lang` says which language its words are in.
+
+## Word packs (`shared/cards/`)
+
+- One JSON file per pack, registered in `shared/cards/index.js`. Nothing else imports the
+  JSON directly.
+- The host picks packs in the lobby (`settings.packs`); changing them rebuilds and
+  reshuffles `state.deck`. An empty or unknown list is refused, never obeyed.
+- The client is sent `catalog` (names, sizes) and only while the room is in the lobby.
+  Card words must never be added to it.
 
 ## Client
 

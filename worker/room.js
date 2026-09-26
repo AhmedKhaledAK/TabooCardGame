@@ -98,7 +98,7 @@ export class Room extends DurableObject {
         changed = G.shuffleTeams(s, me);
         break;
       case 'settings':
-        changed = G.updateSettings(s, me, { rounds: msg.rounds, seconds: msg.seconds });
+        changed = G.updateSettings(s, me, { rounds: msg.rounds, seconds: msg.seconds, packs: msg.packs });
         break;
       case 'start':
         changed = G.startGame(s, me, now);

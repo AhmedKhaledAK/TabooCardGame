@@ -17,6 +17,19 @@ or on the **web** with a table code.
 
 Teams are **Shams** (the sun) and **Nil** (the Nile).
 
+## Word packs
+
+The host picks the decks from the lobby and can mix as many as they like. English:
+General, Screen, Food & Drink, Sports, Tech & Internet. Arabic (Egyptian):
+عام, أكل وشرب, مصر وحياتنا, أفلام ومسلسلات. Arabic cards are matched the way people
+type: harakat, hamzas, ال and ة/ه are all folded away before a guess is compared.
+
+To add a pack, drop a `shared/cards/<lang>-<topic>.json` next to the others, list it in
+`shared/cards/index.js`, and bump `STATE_VERSION` in `shared/game.js` — a card is stored
+as its index in the flattened deck, so changing the packs shifts them. `npm test` checks
+every pack: five forbidden words each, no duplicates, and no forbidden word that would
+count as its own answer.
+
 ## How it's built
 
 | Path | What |
@@ -24,7 +37,7 @@ Teams are **Shams** (the sun) and **Nil** (the Nile).
 | `client/` | React 19 + Vite + Tailwind 4. `src/lib/discord.js` is the Discord SDK handshake and sign-in, `src/lib/room.js` is the room socket. |
 | `shared/game.js` | The rules as pure functions with an injected clock. Used by the server and the tests. |
 | `shared/match.js` | Matching typed guesses and clues: typos, plurals, articles. |
-| `shared/cards.json` | 150 cards: `{ word, forbidden: [5 words] }`. |
+| `shared/cards/` | The word packs, one JSON file each: `{ word, forbidden: [5 words] }`. `index.js` lists them. |
 | `worker/` | Cloudflare Worker: `/api/token` (OAuth), and one Durable Object per table (`/api/room/discord/<instanceId>` or `/api/room/web/<CODE>`). It serves `dist/` for everything else. |
 | `scripts/` | `game.test.mjs` (unit tests) and `test-room.mjs` (end-to-end over real sockets). |
 

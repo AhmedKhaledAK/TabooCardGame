@@ -112,8 +112,81 @@ export function Lobby({ s, send, code }) {
         </div>
       </div>
 
+      <Packs s={s} send={send} host={host} />
+
       <HowToPlay />
     </main>
+  );
+}
+
+/**
+ * Which decks are in play. The words themselves never reach the browser, so
+ * this is built from the catalog the server sends with the lobby state.
+ */
+function Packs({ s, send, host }) {
+  const catalog = s.catalog ?? [];
+  const chosen = s.settings.packs ?? [];
+  const on = (id) => chosen.includes(id);
+  const cards = catalog.filter((p) => on(p.id)).reduce((n, p) => n + p.count, 0);
+  const groups = [...new Set(catalog.map((p) => p.group))];
+
+  const toggle = (id) => {
+    const next = on(id) ? chosen.filter((x) => x !== id) : [...chosen, id];
+    // One pack has to stay on, otherwise there is nothing to deal.
+    if (next.length) send({ t: 'settings', packs: next });
+  };
+
+  if (catalog.length === 0) return null;
+  return (
+    <section className="panel grid gap-3 p-4">
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 className="font-display text-2xl">Word packs</h2>
+        <p className="text-sm text-ink-soft">
+          {host ? 'Mix as many as you like. ' : `${chosen.length} pack${chosen.length > 1 ? 's' : ''} in play. `}
+          <b className="text-ink">{cards}</b> cards in the deck.
+        </p>
+      </div>
+      {groups.map((group) => (
+        <div key={group} className="grid gap-1.5">
+          <span className="label">{group}</span>
+          <div className="flex flex-wrap gap-2">
+            {catalog
+              .filter((p) => p.group === group)
+              .map((p) => (
+                <PackChip key={p.id} pack={p} on={on(p.id)} host={host} onToggle={() => toggle(p.id)} />
+              ))}
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function PackChip({ pack, on, host, onToggle }) {
+  const rtl = pack.lang === 'ar';
+  const body = (
+    <>
+      <span aria-hidden="true" className="text-sm">
+        {on ? '✓' : '+'}
+      </span>
+      <span dir={rtl ? 'rtl' : 'ltr'} className={rtl ? 'font-display text-xl leading-none' : ''}>
+        {pack.name}
+      </span>
+      <span className="text-xs font-semibold opacity-70 tabular-nums">{pack.count}</span>
+    </>
+  );
+  const look = `flex items-center gap-1.5 rounded-full border-2 border-ink px-3 py-1 font-bold ${on ? 'bg-ok text-white' : 'bg-white'}`;
+  if (!host) {
+    return (
+      <span className={`${look} ${on ? '' : 'opacity-40'}`} title={pack.blurb}>
+        {body}
+      </span>
+    );
+  }
+  return (
+    <button type="button" role="switch" aria-checked={on} title={pack.blurb} className={`${look} cursor-pointer ${on ? 'hover:bg-ok/85' : 'hover:bg-gold'}`} onClick={onToggle}>
+      {body}
+    </button>
   );
 }
 

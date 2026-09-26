@@ -229,7 +229,7 @@ function WordCard({ card, unlocked, cardNo, team }) {
       >
         <div className={`border-b-2 border-ink px-4 pt-2 pb-3 text-center text-white ${T.bg}`}>
           <div className="text-xs font-bold tracking-widest uppercase opacity-80">Card {cardNo}</div>
-          <div className="font-display text-5xl leading-tight break-words">{card.word}</div>
+          <div dir="auto" className="font-display text-5xl leading-tight break-words">{card.word}</div>
         </div>
         <ul className="grid gap-1.5 bg-white p-3">
           {card.forbidden.map((w, i) => {
@@ -246,7 +246,7 @@ function WordCard({ card, unlocked, cardNo, team }) {
                 <span aria-hidden="true" className="w-5 text-center">
                   {free ? '✓' : '⊘'}
                 </span>
-                <span>{w}</span>
+                <span dir="auto">{w}</span>
                 <span className="ml-auto text-xs font-semibold tracking-wide uppercase opacity-80">{free ? 'allowed now' : 'mamnou3'}</span>
               </motion.li>
             );
@@ -307,6 +307,7 @@ function TextBox({ kind, max, placeholder, hint, button, tint, big = false, onSe
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
+          dir="auto"
           enterKeyHint="send"
           onChange={(e) => setText(e.target.value)}
         />
@@ -386,7 +387,7 @@ function FeedItem({ e, s, old, divider }) {
         className="flex items-baseline gap-2 text-sm"
       >
         <span className="w-20 shrink-0 truncate text-right text-xs font-bold text-ink-soft">{who}</span>
-        <span className="min-w-0 break-words">{body}</span>
+        <span dir="auto" className="min-w-0 break-words">{body}</span>
       </motion.li>
     </>
   );

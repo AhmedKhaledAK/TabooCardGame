@@ -85,6 +85,19 @@ alice.send({ t: 'settings', rounds: 1, seconds: 10 });
 await until(() => alice.state.settings.seconds === 10 && alice.state.teams.B.length === 2 && alice.state.teams.A.length === 2, 'teams + settings');
 check(alice.state.settings.rounds === 1, 'non-host settings ignored, host settings applied');
 
+// --- word packs: the lobby gets the list, the host picks, the words stay home
+const packs = alice.state.catalog ?? [];
+check(packs.length >= 2 && packs.every((p) => p.count > 0 && !('cards' in p)), 'pack catalog without any words in it');
+const arabic = packs.find((p) => p.lang === 'ar');
+alice.send({ t: 'settings', packs: [arabic.id, 'en-general'] });
+await until(() => alice.state.settings.packs.length === 2, 'two packs in play');
+check(cara.state.settings.packs.includes(arabic.id), 'everyone sees the pack choice');
+alice.send({ t: 'settings', packs: [] });
+await sleep(150);
+check(alice.state.settings.packs.length === 2, 'an empty pack list is refused');
+alice.send({ t: 'settings', packs: ['en-general'] });
+await until(() => alice.state.settings.packs.length === 1, 'back to one pack');
+
 bob.send({ t: 'start' });
 await sleep(300);
 check(alice.state.phase === 'lobby', 'non-host cannot start');

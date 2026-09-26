@@ -15,10 +15,10 @@
  * teammates type guesses, and the referee (`watcher`, from the other team)
  * blows the whistle when a forbidden word is said out loud.
  */
-import CARDS from './cards.json' with { type: 'json' };
+import { CARDS, CATALOG, DEFAULT_PACKS, cardIndexes, cleanPacks } from './cards/index.js';
 import { answerParts, isAnswer, mentions } from './match.js';
 
-export { CARDS };
+export { CARDS, CATALOG };
 
 export const TEAMS = ['A', 'B'];
 export const COUNTDOWN_MS = 3000;
@@ -39,7 +39,7 @@ export const CLUE_MAX = 80;
 export const GUESS_GAP_MS = 350;
 
 /** Bump when the stored shape changes; the room discards older state. */
-export const STATE_VERSION = 3;
+export const STATE_VERSION = 4;
 
 const other = (team) => (team === 'A' ? 'B' : 'A');
 const clamp = (n, { min, max, def }) => {
@@ -55,7 +55,7 @@ export function createState(code, rand = Math.random) {
     phase: 'lobby', // lobby | ready | countdown | playing | round_over | over
     players: [], // join order; also host order
     teams: { A: [], B: [] },
-    settings: { rounds: LIMITS.rounds.def, seconds: LIMITS.seconds.def },
+    settings: { rounds: LIMITS.rounds.def, seconds: LIMITS.seconds.def, packs: [...DEFAULT_PACKS] },
     scores: { A: 0, B: 0 },
     round: 0,
     roundLen: 0,
@@ -64,7 +64,7 @@ export function createState(code, rand = Math.random) {
     cursor: { describe: { A: 0, B: 0 }, watch: { A: 0, B: 0 } },
     turn: null,
     breakEndsAt: null, // round_over only: when the next round starts by itself
-    deck: shuffle(CARDS.map((_, i) => i), rand),
+    deck: shuffle(cardIndexes(DEFAULT_PACKS), rand),
     deckPos: 0,
     log: [],
     logSeq: 0,
@@ -101,7 +101,7 @@ export const teamName = (t) => (t === 'A' ? 'Shams' : 'Nil');
 
 function drawCard(s, rand) {
   if (s.deckPos >= s.deck.length) {
-    s.deck = shuffle(CARDS.map((_, i) => i), rand);
+    s.deck = shuffle(cardIndexes(s.settings.packs), rand);
     s.deckPos = 0;
   }
   return s.deck[s.deckPos++];
@@ -219,14 +219,24 @@ export function shuffleTeams(s, id, rand = Math.random) {
   return true;
 }
 
-export function updateSettings(s, id, patch) {
+export function updateSettings(s, id, patch, rand = Math.random) {
   if (s.phase !== 'lobby' || !isHost(s, id)) return false;
+  // An unknown or empty pack list is ignored rather than obeyed: a deck with
+  // no cards in it would have nothing to deal.
+  const packs = patch.packs === undefined ? s.settings.packs : (cleanPacks(patch.packs) ?? s.settings.packs);
   const next = {
     rounds: patch.rounds === undefined ? s.settings.rounds : clamp(patch.rounds, LIMITS.rounds),
     seconds: patch.seconds === undefined ? s.settings.seconds : clamp(patch.seconds, LIMITS.seconds),
+    packs,
   };
-  if (next.rounds === s.settings.rounds && next.seconds === s.settings.seconds) return false;
+  const sameDeck = packs.join() === s.settings.packs.join();
+  if (next.rounds === s.settings.rounds && next.seconds === s.settings.seconds && sameDeck) return false;
   s.settings = next;
+  // The deck holds card indexes, so it has to be rebuilt from the new packs.
+  if (!sameDeck) {
+    s.deck = shuffle(cardIndexes(packs), rand);
+    s.deckPos = 0;
+  }
   return true;
 }
 
@@ -507,6 +517,9 @@ export function viewFor(s, viewerId, now) {
     teams: s.teams,
     hostId: hostId(s),
     settings: s.settings,
+    // Only the lobby needs the pack list, and only there is it cheap to send:
+    // during a game the state goes out on every guess.
+    catalog: s.phase === 'lobby' ? CATALOG : null,
     scores: s.scores,
     round: s.round,
     roundLen: s.roundLen,

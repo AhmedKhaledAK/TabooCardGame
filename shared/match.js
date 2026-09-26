@@ -8,7 +8,27 @@
  */
 const ARTICLES = new Set(['a', 'an', 'the']);
 
-/** Lowercase words with accents and punctuation stripped. */
+/**
+ * Arabic is typed as loosely as it is spoken: hamzas are left off, ta marbuta
+ * and ha are swapped, alef maqsura and ya are the same key to most people.
+ * Folding them all together costs nothing -- no two real answers differ only
+ * by a hamza -- and saves a correct guess from being called wrong.
+ */
+function arabic(word) {
+  // The hamza carriers (أ إ آ ؤ ئ) are gone already: tokens() decomposes and
+  // then drops every combining mark, which leaves the bare letter behind.
+  const folded = word
+    .replace(/ـ/g, '') // tatweel, the decorative stretch
+    .replace(/ٱ/g, 'ا') // alef wasla -> alef
+    .replace(/ى/g, 'ي') // alef maqsura -> ya
+    .replace(/ة/g, 'ه'); // ta marbuta -> ha
+  // The definite article is the Arabic "the", and just as optional in a guess.
+  return folded.startsWith('ال') && folded.length >= 5 ? folded.slice(2) : folded;
+}
+
+const HAS_ARABIC = /\p{Script=Arabic}/u;
+
+/** Lowercase words with accents, punctuation and Arabic spelling folded away. */
 export function tokens(text) {
   return String(text ?? '')
     .normalize('NFKD')
@@ -16,7 +36,8 @@ export function tokens(text) {
     .toLowerCase()
     .replace(/['’]/g, '')
     .split(/[^\p{L}\p{N}]+/u)
-    .filter(Boolean);
+    .filter(Boolean)
+    .map((w) => (HAS_ARABIC.test(w) ? arabic(w) : w));
 }
 
 const bare = (toks) => toks.filter((t) => !ARTICLES.has(t));
